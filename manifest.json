@@ -1,0 +1,16 @@
+{
+  "name": "宇工祭2026 デジタルパンフレット",
+  "short_name": "宇工祭2026",
+  "description": "栃木県立宇都宮工業高等学校 文化祭「宇工祭2026」デジタルパンフレット",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FDF6EC",
+  "theme_color": "#14213D",
+  "lang": "ja",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
