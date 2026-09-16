@@ -41,15 +41,15 @@
 <body>
 <main id="app">
   <header class="banner">
-    <img class="mascot" src="uk-lion.png" alt="宇工祭ライオン">
+    <img class="mascot" src="uk-lion.png" alt="UKライオン">
     <div class="school">宇都宮工業高等学校</div><h1>宇工祭<span>2026</span></h1><div class="theme">〜 唯一無二の瞬間を 〜</div>
   </header>
   <div class="intro">見たい教室・会場をタップすると、下に催し物の詳細が表示されます。</div>
   <section class="building" aria-label="校舎・教室一覧">
-    <div class="building-head"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M13 26 32 10l19 16v28H13z" fill="#fffdf8" stroke="#18344d" stroke-width="3"/><path d="M8 27 32 7l24 20" fill="none" stroke="#18344d" stroke-width="3" stroke-linejoin="round"/><path d="M25 54V38h14v16M20 30h5m14 0h5" stroke="#306486" stroke-width="3"/></svg><div><strong>校舎（教室棟）</strong><span>　教室を選択</span></div></div>
+    <div class="building-head"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M13 26 32 10l19 16v28H13z" fill="#fffdf8" stroke="#18344d" stroke-width="3"/><path d="M8 27 32 7l24 20" fill="none" stroke="#18344d" stroke-width="3" stroke-linejoin="round"/><path d="M25 54V38h14v16M20 30h5m14 0h5" stroke="#306486" stroke-width="3"/></svg><div><strong>校舎（教室棟）</strong><span>　教室を選択してください</span></div></div>
     <div id="floors"></div>
   </section>
-  <section class="facilities" aria-label="体育館一覧"><div class="facility-label">体育館<small>会場選択</small></div><button class="facility" data-zone="gymA">第1体育館</button><button class="facility" data-zone="gymB">第2体育館</button></section>
+  <section class="facilities" aria-label="体育館一覧"><div class="facility-label">体育館<small></small></div><button class="facility" data-zone="gymA">第1体育館</button><button class="facility" data-zone="gymB">第2体育館</button></section>
   <section class="detail"><div class="detail-title"><span class="tag" id="detailTag">案内</span><h2 id="detailTitle">催し物を選んでください</h2><p id="detailMeta"></p></div><div id="eventList"><div class="empty">上の教室または体育館をタップすると、<br>ここに催し物の詳細が表示されます。</div></div></section>
 </main>
 <script>
