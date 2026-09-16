@@ -20,6 +20,7 @@
   .school{font-size:11px;letter-spacing:.12em;font-weight:700;color:var(--blue)}
   h1{margin:3px 0 0;font-family:"Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;font-size:27px;letter-spacing:.06em;line-height:1.1}
   h1 span{color:var(--orange);font-size:.86em;margin-left:3px}.theme{font-size:12px;margin-top:4px;font-weight:600;color:var(--muted)}
+  .saiji-link{display:flex;align-items:center;justify-content:center;gap:10px;width:calc(100% - 32px);margin:18px auto calc(24px + env(safe-area-inset-bottom));padding:15px 18px;border:3px solid var(--ink);border-radius:7px;background:var(--orange);box-shadow:4px 4px 0 var(--ink);color:#fff;text-decoration:none;font-size:17px;font-weight:800;letter-spacing:.06em}.saiji-link:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}.saiji-link .arrow{font-size:22px;line-height:0}
   .intro{padding:11px 18px 8px;font-size:12px;text-align:center;color:var(--muted)}
   .building{margin:0 15px 16px;border:3px solid var(--ink);border-radius:6px;background:rgba(255,255,255,.85);box-shadow:3px 4px 0 rgba(24,52,77,.13)}
   .building-head{display:flex;align-items:center;gap:9px;padding:9px 12px 8px;border-bottom:2px solid var(--ink)}
@@ -34,8 +35,7 @@
   .facility{border:0;border-right:2px solid var(--ink);border-radius:0;background:#fffdf8;color:var(--ink);font:800 13px/1.3 inherit;cursor:pointer;transition:.15s transform,.15s background;padding:8px}.facility:last-child{border-right:0}.facility:active{transform:scale(.97)}.facility.selected{background:#e9b94f}
   .detail{margin:0 15px;padding:0 0 calc(20px + env(safe-area-inset-bottom));border-top:3px solid var(--ink)}
   .detail-title{display:flex;align-items:center;gap:8px;padding:11px 2px 8px}.detail-title .tag{border:2px solid var(--ink);border-radius:999px;padding:2px 8px;font-size:10px;font-weight:800;background:#fff}.detail-title h2{font-size:17px;margin:0}.detail-title p{font-size:11px;color:var(--muted);margin:0 0 0 auto}
-  #eventList{border:2px solid var(--ink);border-radius:5px;background:rgba(255,255,255,.88);min-height:130px;overflow:hidden}.empty{padding:34px 16px;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}.event{padding:13px 14px;border-bottom:1px dashed var(--line)}.event:last-child{border-bottom:0}.event-top{display:flex;gap:8px;align-items:baseline;justify-content:space-between}.event-name{font-size:16px;font-weight:800}.event-time{font-size:11px;color:var(--orange);font-weight:800;white-space:nowrap}.event-room{font-size:11px;color:var(--muted);margin-top:3px}.event-desc{font-size:13px;line-height:1.55;margin-top:5px}
-  @media(min-width:520px){.room-btn{font-size:11px}.floor{min-height:86px}}
+  #eventList{border:2px solid var(--ink);border-radius:5px;background:rgba(255,255,255,.88);min-height:130px;overflow:hidden}.empty{padding:34px 16px;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}.event{padding:13px 14px;border-bottom:1px dashed var(--line)}.event:last-child{border-bottom:0}.event-top{display:flex;gap:8px;align-items:baseline;justify-content:space-between}.event-name{font-size:16px;font-weight:800}.event-time{font-size:11px;color:var(--orange);font-weight:800;white-space:nowrap}.event-room{font-size:11px;color:var(--muted);margin-top:3px}.event-desc{font-size:13px;line-height:1.55;margin-top:5px}./*event-image{display:block;width:min(62%,260px);aspect-ratio:16/9;object-fit:cover;margin:12px auto 4px;border:1px dashed var(--line);border-radius:4px;background:var(--paper)}*/
 </style>
 </head>
 <body>
@@ -44,14 +44,16 @@
     <img class="mascot" src="uk-lion.png" alt="UKライオン">
     <div class="school">宇都宮工業高等学校</div><h1>宇工祭<span>2026</span></h1><div class="theme">〜 唯一無二の瞬間を 〜</div>
   </header>
-  <div class="intro">見たい教室・会場をタップすると、下に催し物の詳細が表示されます。</div>
-  <section class="building" aria-label="校舎・教室一覧">
-    <div class="building-head"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M13 26 32 10l19 16v28H13z" fill="#fffdf8" stroke="#18344d" stroke-width="3"/><path d="M8 27 32 7l24 20" fill="none" stroke="#18344d" stroke-width="3" stroke-linejoin="round"/><path d="M25 54V38h14v16M20 30h5m14 0h5" stroke="#306486" stroke-width="3"/></svg><div><strong>校舎（教室棟）</strong><span>　教室を選択してください</span></div></div>
-    <div id="floors"></div>
-  </section>
-  <section class="facilities" aria-label="体育館一覧"><div class="facility-label">体育館<small></small></div><button class="facility" data-zone="gymA">第1体育館</button><button class="facility" data-zone="gymB">第2体育館</button></section>
-  <section class="detail"><div class="detail-title"><span class="tag" id="detailTag">案内</span><h2 id="detailTitle">催し物を選んでください</h2><p id="detailMeta"></p></div><div id="eventList"><div class="empty">上の教室または体育館をタップすると、<br>ここに催し物の詳細が表示されます。</div></div></section>
-</main>
+
+  <img src="poster.jpg" style="max-width: 100%; height: auto;" alt="宇工祭ポスター">
+  <a class="saiji-link" href="aisatsu.html">ごあいさつ <span class="arrow" aria-hidden="true">→</span></a>
+  <a class="saiji-link" href="saiji.html">催事一覧を見る <span class="arrow" aria-hidden="true">→</span></a>
+  <a class="saiji-link" href="taiikukan.html">体育館での特別催事 <span class="arrow" aria-hidden="true">→</span></a>
+  <hr>
+  <h2>●お願い●</h2>
+<p>・会期中は､本校生徒のｽﾏﾎ等の利用を記録写真撮影とパンフレット閲覧のみ許可しています｡本校生徒との電話･SNS等での連絡のやり取りはご遠慮ください｡</p>
+<p>・個人情報､肖像権等の保護のため､撮影した写真等のSNSへの投稿はご遠慮ください｡</p>
+  
 <script>
 const FALLBACK_EVENTS={"1f":{"label":"1階","grade":"3年生","building":"校舎","items":[{"name":"機械科3年A組","desc":"ビンゴ／飲食スペース"},{"name":"機械科3年B組","desc":"お化け屋敷／編み物販売"},{"name":"電子機械科3年","desc":"メイド喫茶／自作ゲーム"},{"name":"電気科3年","desc":"ケバブ／PCゲーム（連打ゲーム・フラッピーバード）／飲食スペース"},{"name":"電子情報科3年","desc":"焼き鳥"},{"name":"建築デザイン科3年","desc":"もも串・牛串 他／射的／課題研究作品販売"},{"name":"環境設備科3年","desc":"クレープ／飲食スペース"},{"name":"環境土木科3年","desc":"ドミノピザ／ビリヤード／カードゲーム／弓道体験／プランター販売"}]},"2f":{"label":"2階","grade":"2年生","building":"校舎","items":[{"name":"機械科2年A組","desc":"ゲームセンター（射的・エアホッケー・トランプ）"},{"name":"機械科2年B組","desc":"お化け屋敷"},{"name":"電子機械科2年","desc":"パターゴルフ／キックターゲット"},{"name":"電気科2年","desc":"お化け屋敷"},{"name":"電子情報科2年","desc":"シューティングゲーム／ミニゲーム"},{"name":"建築デザイン科2年","desc":"気配切り"},{"name":"環境設備科2年","desc":"レモンコインボール投げ／コーヒーカップ／キーホルダー販売"},{"name":"環境土木科2年","desc":"脱出ゲーム"}]},"3f":{"label":"3階","grade":"1年生","building":"校舎","items":[{"name":"機械科1年A組","desc":"8番出口／間違い探しゲーム"},{"name":"機械科1年B組","desc":"旧宇工機1B"},{"name":"機械科1年C組","desc":"射的"},{"name":"電情1年A組","desc":"カジノ風カードゲーム／さいころゲーム"},{"name":"電情1年B組","desc":"的当て"},{"name":"建築デザイン科1年","desc":"ブラックジャック／ルーレット／チンチロ／レッドドッグ"},{"name":"環境1年A組","desc":"ゾンビ屋敷"},{"name":"環境1年B組","desc":"NO LIMIT!! アンボール風ゲーム／ボーリング"}]},"gymA":{"label":"第一体育館","building":"第１体育館","items":[{"name":"開会式","room":"第一体育館","time":"8:45-9:15"},{"name":"有志ステージ発表","room":"第一体育館","time":"12:30-14:30","desc":"ダンス・バンドなど有志パフォーマンス。"}]},"gymB":{"label":"第二体育館","building":"体育館B","items":[{"name":"部活動対抗 バスケ交流戦","room":"第二体育館","time":"10:00-12:00"}]}};
 let EVENTS={};
@@ -60,8 +62,9 @@ async function loadEvents(){EVENTS=FALLBACK_EVENTS;try{const r=await fetch('even
 function renderFloors(){[['3f','3F','1年生'],['2f','2F','2年生'],['1f','1F','3年生']].forEach(([id,label,grade])=>{const data=EVENTS[id]||{items:[]},row=document.createElement('div');row.className='floor';row.innerHTML=`<div class="floor-label">${label}<small>${grade}</small></div><div class="rooms"></div>`;const roomBox=row.querySelector('.rooms');data.items.forEach((item,index)=>{const b=document.createElement('button');b.className='room-btn';b.textContent=shortName(item.name);b.title=item.name;b.addEventListener('click',()=>selectRoom(id,index,b));roomBox.appendChild(b)});floors.appendChild(row)})}
 function shortName(name){return name.replace(/(機械科|電子機械科|電子情報科|建築デザイン科|環境設備科|環境土木科|電気科)/,'').replace(/年/g,'').replace(/組/g,'')||name}
 function activate(button){document.querySelectorAll('.selected').forEach(el=>el.classList.remove('selected'));if(button)button.classList.add('selected')}
-function selectRoom(zone,index,button){activate(button);const data=EVENTS[zone],item=data.items[index];show(data.label+' '+item.name,data.building,item)}
-function selectZone(zone,button){activate(button);const data=EVENTS[zone];show(data.label,data.building,null,data.items||[])}
+function selectRoom(zone,index,button){activate(button);const data=EVENTS[zone],item=data.items[index];show(data.label+' '+item.name,data.building,item);addPlaceholderImage()}
+function selectZone(zone,button){activate(button);const data=EVENTS[zone];show(data.label,data.building,null,data.items||[]);addPlaceholderImage()}
+function addPlaceholderImage(){eventList.insertAdjacentHTML('afterbegin','<img class="event-image" src="no-image.svg" alt="催し物の写真は準備中">')}
 function show(title,tag,item,items){detailTitle.textContent=title;detailTag.textContent=tag;const list=items||(item?[item]:[]);detailMeta.textContent=list.length>1?`${list.length}件`:'';eventList.innerHTML=list.length?list.map(ev=>`<article class="event"><div class="event-top"><div class="event-name">${escapeHTML(ev.name)}</div>${ev.time?`<div class="event-time">${escapeHTML(ev.time)}</div>`:''}</div>${ev.room?`<div class="event-room">${escapeHTML(ev.room)}</div>`:''}${ev.desc?`<div class="event-desc">${escapeHTML(ev.desc)}</div>`:''}</article>`).join(''):'<div class="empty">この会場の催し物は準備中です。</div>'}
 function escapeHTML(s){return String(s||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 document.querySelectorAll('.facility').forEach(b=>b.addEventListener('click',()=>selectZone(b.dataset.zone,b)));loadEvents();
