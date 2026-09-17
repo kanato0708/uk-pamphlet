@@ -648,7 +648,7 @@
           data.items.forEach((item, index) => {
             const b = document.createElement("button");
             b.className = "room-btn";
-            b.textContent = shortName(item.name);
+            b.textContent = buttonLabel(item);
             b.title = item.name;
             b.addEventListener("click", () => selectRoom(id, index, b));
             roomBox.appendChild(b);
@@ -656,8 +656,8 @@
           floors.appendChild(row);
         });
       }
-      function shortName(name) {
-        return name;
+      function buttonLabel(item) {
+        return item.room || item.name;
       }
       function renderActivityZones() {
         [
@@ -672,7 +672,7 @@
           data.items.forEach((item, index) => {
             const b = document.createElement("button");
             b.className = "room-btn";
-            b.textContent = item.name;
+            b.textContent = buttonLabel(item);
             b.title = item.name;
             b.addEventListener("click", () => selectRoom(id, index, b));
             roomBox.appendChild(b);
