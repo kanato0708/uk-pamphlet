@@ -632,6 +632,10 @@
         }
         renderFloors();
         renderActivityZones();
+        document.querySelectorAll(".facility").forEach((button) => {
+          const items = EVENTS[button.dataset.zone]?.items || [];
+          button.textContent = [...new Set(items.map(buttonLabel).filter(Boolean))].join("・");
+        });
         if (eventSearch.value || activeCategory) searchEvents();
       }
       function renderFloors() {
@@ -657,7 +661,7 @@
         });
       }
       function buttonLabel(item) {
-        return item.room || item.name;
+        return item.room ?? "";
       }
       function renderActivityZones() {
         [
