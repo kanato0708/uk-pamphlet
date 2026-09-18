@@ -1,0 +1,8 @@
+.crowd-note {margin:8px 18px;font-size:12px;line-height:1.5;color:#617384}
+.crowd-badge {display:inline-block;border:1px solid currentColor;border-radius:5px;padding:3px 6px;margin-top:5px;font-size:11px;font-weight:700;line-height:1.45;background:#edf0f2;color:#475569;white-space:normal}
+.crowd-badge[data-tone="quiet"] {background:#e4f4e8;color:#205b34}
+.crowd-badge[data-tone="moderate"] {background:#fff2ce;color:#745100}
+.crowd-badge[data-tone="busy"] {background:#fce4e4;color:#9c2424}
+.crowd-badge[data-tone="closed"] {background:#e9e3f7;color:#443088}
+.room-btn .crowd-badge {font-size:9px;line-height:1.2;margin:2px;padding:2px;writing-mode:vertical-rl}
+.facility .crowd-badge {display:block;font-size:10px}

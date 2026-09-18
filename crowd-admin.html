@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>混雑状況の管理｜宇工祭2026</title>
+  <link rel="stylesheet" href="crowd.css">
+  <style>
+    *{box-sizing:border-box} [hidden]{display:none!important}
+    body{margin:0;background:#f4ecd9;color:#18344d;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif}
+    main{max-width:850px;margin:auto;padding:22px 16px 50px} h1{font-size:24px;margin:0 0 10px}h2{font-size:19px}h3{font-size:16px;margin:0 0 6px}
+    p{line-height:1.65} .card{background:#fffdf8;border:2px solid #18344d;border-radius:8px;padding:16px;margin:12px 0}
+    label{display:block;margin:12px 0;font-size:14px;font-weight:700}
+    input:not([type=checkbox]),select{display:block;width:100%;padding:11px;margin-top:5px;border:1px solid #617384;border-radius:5px;font:inherit}
+    button{min-height:44px;padding:10px 13px;border:2px solid #18344d;border-radius:6px;background:#fff;color:#18344d;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.5;cursor:default}button.primary{background:#443088;color:white}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #306486;outline-offset:3px}
+    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.toolbar p{flex:1}.muted{font-size:13px;color:#617384}.message{padding:12px;border-left:4px solid #443088;background:white;overflow-wrap:anywhere}
+    .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.choices button[aria-pressed=true]{box-shadow:inset 0 0 0 2px #18344d}
+    .choices [data-status=quiet]{background:#e4f4e8}.choices [data-status=moderate]{background:#fff2ce}.choices [data-status=busy]{background:#fce4e4}.choices [data-status=closed]{background:#e9e3f7}
+    fieldset{border:1px solid #d7c7aa;border-radius:5px;padding:12px}.assignments{max-height:260px;overflow:auto}.assignments label{display:flex;align-items:center;gap:9px;font-weight:400;min-height:36px}.assignments input{width:20px;height:20px;flex:none}
+    .entry{border-bottom:1px solid #d7c7aa;padding:10px 0;overflow-wrap:anywhere}.entry:last-child{border-bottom:0}code{overflow-wrap:anywhere}a{color:#443088}
+  </style>
+</head>
+<body>
+<main>
+  <h1>混雑状況の管理</h1>
+  <p class="muted">担当する催事の状態を選ぶと、来場者の画面に反映されます。同じ状態でも定期的に更新してください。</p>
+  <p id="message" class="message" role="status">管理画面を読み込んでいます…</p>
+  <section id="loginPanel" class="card">
+    <h2>係・管理者ログイン</h2>
+    <form id="loginForm">
+      <label>メールアドレス<input id="email" type="email" autocomplete="username" required></label>
+      <label>パスワード<input id="password" type="password" autocomplete="current-password" required></label>
+      <button id="loginButton" class="primary" disabled>ログイン</button>
+    </form>
+  </section>
+  <section id="sessionPanel" hidden>
+    <div class="toolbar"><p id="identity"></p><button id="logout" type="button">ログアウト</button></div>
+    <p id="permissionMessage" class="muted"></p>
+    <section id="eventSection" hidden>
+      <h2>混雑状況を更新</h2>
+      <p id="connection" class="muted" role="status">通信を確認しています…</p>
+      <div id="eventCards"></div>
+    </section>
+    <section id="adminPanel" hidden>
+      <section class="card">
+        <h2>催事データの登録</h2>
+        <p class="muted">初回と催事追加時に実行してください。すでにある混雑状況は保持します。</p>
+        <button id="initialize" type="button">未登録の催事を登録</button>
+      </section>
+      <section class="card">
+        <h2>係の権限・担当を設定</h2>
+        <p class="muted">Firebase Authenticationでアカウントを作成し、そのユーザーUIDを入力します。権限の停止もここで設定できます。</p>
+        <form id="permissionForm">
+          <label>ユーザーUID<input id="staffUid" required pattern="[A-Za-z0-9_-]{1,128}" autocomplete="off"></label>
+          <label>係の表示名<input id="staffName" required maxlength="80" placeholder="例：101教室担当"></label>
+          <label>権限<select id="staffRole"><option value="staff">係（担当催事のみ）</option><option value="admin">管理者（全催事・権限設定）</option></select></label>
+          <label><input id="staffActive" type="checkbox" checked> 更新権限を有効にする</label>
+          <fieldset><legend>担当する催事（係の場合）</legend><div id="assignments" class="assignments"></div></fieldset>
+          <p><button class="primary" id="savePermission">権限を保存</button> <button type="button" id="clearPermission">入力をクリア</button></p>
+        </form>
+        <h3>登録済みの係・管理者</h3><div id="staffList"></div>
+      </section>
+      <section class="card"><h2>最近の更新履歴</h2><div id="history"></div></section>
+    </section>
+  </section>
+  <p><a href="saiji.html">来場者向け催事一覧を開く</a></p>
+</main>
+<script type="module">
+  const timer=setTimeout(()=>{document.getElementById("message").textContent="読み込みに時間がかかっています。通信を確認して再読み込みしてください。";},15000);
+  import("./crowd-admin.js").then(()=>clearTimeout(timer)).catch(()=>{
+    clearTimeout(timer);
+    document.getElementById("message").textContent="管理画面を読み込めません。通信とアップロードしたファイルを確認してください。";
+  });
+</script>
+</body>
+</html>
