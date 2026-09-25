@@ -9,9 +9,13 @@ let records = new Map();
 let serverFresh = false;
 let failed = false;
 function zoneName(zone) { return {"3f":"校舎 3階", "2f":"校舎 2階", "1f":"校舎 1階", gymA:"第1体育館", gymB:"第2体育館", admin:"管理棟", courtyard:"中庭"}[zone] || zone; }
+function mapStatus(record, connected) {
+  if (!connected) return "通信不可";
+  return {quiet:"空き", moderate:"やや混雑", busy:"混雑", closed:"終了"}[record?.status] || "要確認";
+}
 function render() {
   const connected = serverFresh && navigator.onLine && !failed;
-  connection.textContent = connected ? "係が更新した情報を表示しています。15分以上更新がない場合は「要確認」です。" : "混雑状況の最新情報を取得できません。会場でご確認ください。";
+  connection.textContent = connected ? "係が更新した混雑状況を表示しています。" : "混雑状況の最新情報を取得できません。会場でご確認ください。";
   groups.replaceChildren();
   for (const zone of zoneOrder) {
     const items = events.filter(event => event.zone === zone);
@@ -21,10 +25,10 @@ function render() {
     const tiles = document.createElement("div"); tiles.className = "tiles";
     for (const event of items) {
       const tile = document.createElement("article"); tile.className = "tile";
-      const room = document.createElement("div"); room.className = "tile-room"; room.textContent = event.room || event.zoneLabel;
+      const room = document.createElement("div"); room.className = "tile-room"; room.textContent = ["3f", "2f", "1f"].includes(zone) ? (event.room || "").replace(/教室$/, "") : (event.room || event.zoneLabel);
       const name = document.createElement("div"); name.className = "tile-name"; name.textContent = event.name;
       const badge = document.createElement("span"); badge.className = "crowd-badge";
-      const state = crowdState(records.get(event.id), connected); badge.dataset.tone = state.tone; badge.textContent = connected ? state.text : "通信確認中";
+      const record = records.get(event.id); const state = crowdState(record, connected); const shortStatus = mapStatus(record, connected); const tone = connected && ["quiet", "moderate", "busy", "closed"].includes(record?.status) ? record.status : state.tone; tile.dataset.tone = tone; badge.dataset.tone = tone; badge.textContent = shortStatus; tile.title = `${event.room || event.name}：${shortStatus}`; tile.setAttribute("aria-label", `${event.room || event.name} ${event.name}：${shortStatus}`);
       tile.append(room, name, badge); tiles.append(tile);
     }
     section.append(heading, tiles); groups.append(section);

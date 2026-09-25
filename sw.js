@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ukousai2026-v14-map-all';
+const CACHE_NAME = 'ukousai2026-v15-monitor-colors';
 const ASSETS = [
   './',
   './index.html',
