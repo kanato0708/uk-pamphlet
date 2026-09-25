@@ -1,8 +1,13 @@
-const CACHE_NAME = 'ukousai2026-v4-monitor';
+const CACHE_NAME = 'ukousai2026-v14-map-all';
 const ASSETS = [
   './',
   './index.html',
   './saiji.html',
+  './map.html',
+  './map.png',
+  './map-links.json',
+  './map-positions.json',
+  './map-local-data.js',
   './crowd.css',
   './crowd-model.js',
   './crowd-view.js',
