@@ -69,8 +69,11 @@ function renderCards() {
     const card = document.createElement("article");
     card.className = "card";
     card.dataset.eventId = event.id;
+    const location = document.createElement("p");
+    location.className = "event-location";
+    location.textContent = event.room || event.zoneLabel;
     const heading = document.createElement("h3");
-    heading.textContent = `${event.room || event.zoneLabel}｜${event.name}`;
+    heading.textContent = event.name;
     const badge = document.createElement("p");
     badge.className = "crowd-badge";
     const buttons = document.createElement("div");
@@ -98,7 +101,7 @@ function renderCards() {
       });
       buttons.append(button);
     }
-    card.append(heading, badge, buttons);
+    card.append(location, heading, badge, buttons);
     $("eventCards").append(card);
   }
   if (!visible.length) $("eventCards").textContent = "担当する催事がありません。管理者に割り当てを依頼してください。";

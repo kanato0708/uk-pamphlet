@@ -7,25 +7,79 @@
   <title>混雑状況の管理｜宇工祭2026</title>
   <link rel="stylesheet" href="crowd.css">
   <style>
-    *{box-sizing:border-box} [hidden]{display:none!important}
-    body{margin:0;background:#f4ecd9;color:#18344d;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif}
-    main{max-width:850px;margin:auto;padding:22px 16px 50px} h1{font-size:24px;margin:0 0 10px}h2{font-size:19px}h3{font-size:16px;margin:0 0 6px}
-    p{line-height:1.65} .card{background:#fffdf8;border:2px solid #18344d;border-radius:8px;padding:16px;margin:12px 0}
-    label{display:block;margin:12px 0;font-size:14px;font-weight:700}
-    input:not([type=checkbox]),select{display:block;width:100%;padding:11px;margin-top:5px;border:1px solid #617384;border-radius:5px;font:inherit}
-    button{min-height:44px;padding:10px 13px;border:2px solid #18344d;border-radius:6px;background:#fff;color:#18344d;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
-    button:disabled{opacity:.5;cursor:default}button.primary{background:#443088;color:white}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #306486;outline-offset:3px}
-    .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.toolbar p{flex:1}.muted{font-size:13px;color:#617384}.message{padding:12px;border-left:4px solid #443088;background:white;overflow-wrap:anywhere}
-    .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.choices button[aria-pressed=true]{box-shadow:inset 0 0 0 2px #18344d}
-    .choices [data-status=quiet]{background:#e4f4e8}.choices [data-status=moderate]{background:#fff2ce}.choices [data-status=busy]{background:#fce4e4}.choices [data-status=closed]{background:#e9e3f7}
-    fieldset{border:1px solid #d7c7aa;border-radius:5px;padding:12px}.assignments{max-height:260px;overflow:auto}.assignments label{display:flex;align-items:center;gap:9px;font-weight:400;min-height:36px}.assignments input{width:20px;height:20px;flex:none}
-    .entry{border-bottom:1px solid #d7c7aa;padding:10px 0;overflow-wrap:anywhere}.entry:last-child{border-bottom:0}code{overflow-wrap:anywhere}a{color:#443088}
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; background: #f5f3ee; color: #18344d; font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif; font-size: 16px; line-height: 1.7; }
+    main { max-width: 1040px; margin: auto; padding: 40px 24px 64px; }
+    .page-header { margin-bottom: 24px; }
+    .eyebrow { margin: 0 0 8px; color: #55428a; font-size: 13px; font-weight: 700; letter-spacing: .08em; }
+    h1 { font-size: clamp(26px, 4vw, 34px); line-height: 1.4; margin: 0 0 12px; }
+    h2 { font-size: 21px; line-height: 1.5; margin: 0 0 12px; }
+    h3 { font-size: 19px; line-height: 1.6; margin: 0 0 12px; }
+    p { margin: 0 0 16px; }
+    .card { background: #fff; border: 1px solid #dce1e5; border-radius: 16px; padding: 28px; margin: 20px 0; box-shadow: 0 3px 14px #18344d06; }
+    label { display: block; margin: 20px 0; font-size: 15px; font-weight: 700; }
+    input:not([type=checkbox]), select { display: block; width: 100%; min-height: 50px; padding: 12px 14px; margin-top: 8px; border: 1px solid #8c99a4; border-radius: 8px; background: #fff; color: #18344d; font: inherit; font-size: 16px; }
+    input[type=checkbox] { width: 20px; height: 20px; vertical-align: middle; accent-color: #55428a; }
+    button { min-height: 48px; padding: 12px 18px; border: 1px solid #8c99a4; border-radius: 9px; background: #fff; color: #18344d; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+    button:hover:not(:disabled) { border-color: #443088; box-shadow: 0 2px 6px #18344d18; }
+    button:disabled { opacity: .55; cursor: default; }
+    button.primary { background: #443088; border-color: #443088; color: #fff; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #306486; outline-offset: 3px; }
+    #loginPanel { max-width: 560px; margin: 28px auto; }
+    #loginButton { width: 100%; margin-top: 8px; }
+    .toolbar { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 28px; }
+    .toolbar p { flex: 1; margin: 0; font-weight: 700; overflow-wrap: anywhere; }
+    .muted { font-size: 14px; color: #526577; line-height: 1.8; }
+    .page-header .muted { font-size: 15px; max-width: 680px; margin-bottom: 0; }
+    .message { padding: 16px 20px; border: 1px solid #d9d1e9; border-left: 4px solid #55428a; border-radius: 8px; background: #f0ecf7; font-size: 15px; overflow-wrap: anywhere; }
+    #permissionMessage { overflow-wrap: anywhere; margin-top: 10px; }
+    #eventSection { margin-top: 32px; }
+    #connection { padding: 12px 16px; background: #eaf0f4; border-radius: 8px; }
+    #eventCards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    #eventCards .card { margin: 0; display: flex; flex-direction: column; padding: 24px; min-width: 0; }
+    .event-location { margin: 0 0 6px; font-size: 14px; font-weight: 700; color: #526577; }
+    #eventCards .crowd-badge { align-self: flex-start; font-size: 14px; padding: 7px 10px; border-radius: 7px; margin: 0 0 20px; }
+    .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: auto; }
+    .choices button { min-height: 56px; border: 2px solid transparent; padding: 10px 6px; }
+    .choices button[aria-pressed=true] { border-color: currentColor; box-shadow: 0 0 0 2px #fff inset; }
+    .choices button[aria-pressed=true]::before { content: "✓ "; }
+    .choices [data-status=quiet] { background: #e4f4e8; color: #205b34; }
+    .choices [data-status=moderate] { background: #fff2ce; color: #745100; }
+    .choices [data-status=busy] { background: #fce4e4; color: #9c2424; }
+    .choices [data-status=closed] { background: #e9e3f7; color: #443088; }
+    #adminPanel { margin-top: 40px; padding-top: 12px; border-top: 1px solid #cfd7dd; }
+    fieldset { min-width: 0; border: 1px solid #cfd7dd; border-radius: 10px; padding: 16px; margin: 24px 0; }
+    legend { padding: 0 8px; font-size: 15px; font-weight: 700; }
+    .assignments { max-height: 320px; overflow: auto; }
+    .assignments label { display: flex; align-items: center; gap: 12px; font-weight: 400; min-height: 48px; margin: 0; padding: 10px 8px; border-bottom: 1px solid #edf0f2; }
+    .assignments label:has(input:checked) { background: #f0ecf7; }
+    .assignments input { flex: none; }
+    .form-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
+    .entry { border-bottom: 1px solid #e1e6e9; padding: 18px 0; overflow-wrap: anywhere; }
+    .entry:last-child { border-bottom: 0; }
+    #history { max-height: 420px; overflow: auto; }
+    code { overflow-wrap: anywhere; }
+    a { color: #443088; text-underline-offset: 4px; }
+    .visitor-link { margin-top: 32px; }
+    .visitor-link a { display: inline-block; padding: 10px 0; }
+    @media (max-width: 640px) {
+      main { padding: 24px 16px 40px; }
+      .card { padding: 22px 18px; }
+      #eventCards { grid-template-columns: 1fr; }
+      #eventCards .card { padding: 20px; }
+      h2 { font-size: 20px; }
+      .message { padding: 14px 16px; }
+    }
   </style>
 </head>
 <body>
 <main>
-  <h1>混雑状況の管理</h1>
-  <p class="muted">担当する催事の状態を選ぶと、来場者の画面に反映されます。同じ状態でも定期的に更新してください。</p>
+  <header class="page-header">
+    <p class="eyebrow">宇工祭2026 · 係・管理者用</p>
+    <h1>混雑状況の管理</h1>
+    <p class="muted">担当する催事の状態を選ぶと、来場者の画面に反映されます。<br>同じ状態でも、定期的に更新してください。</p>
+  </header>
   <p id="message" class="message" role="status">管理画面を読み込んでいます…</p>
   <section id="loginPanel" class="card">
     <h2>係・管理者ログイン</h2>
@@ -58,14 +112,14 @@
           <label>権限<select id="staffRole"><option value="staff">係（担当催事のみ）</option><option value="admin">管理者（全催事・権限設定）</option></select></label>
           <label><input id="staffActive" type="checkbox" checked> 更新権限を有効にする</label>
           <fieldset><legend>担当する催事（係の場合）</legend><div id="assignments" class="assignments"></div></fieldset>
-          <p><button class="primary" id="savePermission">権限を保存</button> <button type="button" id="clearPermission">入力をクリア</button></p>
+          <p class="form-actions"><button class="primary" id="savePermission">権限を保存</button> <button type="button" id="clearPermission">入力をクリア</button></p>
         </form>
         <h3>登録済みの係・管理者</h3><div id="staffList"></div>
       </section>
       <section class="card"><h2>最近の更新履歴</h2><div id="history"></div></section>
     </section>
   </section>
-  <p><a href="saiji.html">来場者向け催事一覧を開く</a></p>
+  <p class="visitor-link"><a href="saiji.html">来場者向け催事一覧を開く</a></p>
 </main>
 <script type="module">
   const timer=setTimeout(()=>{document.getElementById("message").textContent="読み込みに時間がかかっています。通信を確認して再読み込みしてください。";},15000);
