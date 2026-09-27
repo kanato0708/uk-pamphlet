@@ -7,7 +7,7 @@
   <title>催事編集｜宇工祭</title>
   <style>
     :root{--ink:#18344d;--orange:#c75b23;--paper:#f4ecd9;--cream:#fffdf8;--line:#d7c7aa;--muted:#526577}
-    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif}
+    *{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif}
     main{width:min(100%,900px);min-height:100dvh;margin:auto;padding:24px 16px 48px;background:rgba(255,253,248,.9)}
     h1{margin:0;font-size:25px}.lead{margin:8px 0 18px;color:var(--muted);font-size:14px;line-height:1.65}.notice{margin:0 0 18px;padding:12px 14px;border:2px solid var(--ink);border-radius:6px;background:#fff;font-size:13px;line-height:1.65}
     .toolbar{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:16px}button,.import-label,.photo-label{appearance:none;display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 13px;border:2px solid var(--ink);border-radius:5px;background:var(--cream);color:var(--ink);box-shadow:2px 2px 0 var(--ink);font:700 13px/1.3 inherit;cursor:pointer}.primary{background:var(--orange);color:#fff}.import-label input,.photo-label input{position:absolute;width:1px;height:1px;opacity:0}.import-label:focus-within,.photo-label:focus-within,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #397cad;outline-offset:2px}button:disabled{opacity:.55;cursor:wait}
@@ -16,14 +16,15 @@
   </style>
 </head>
 <body>
-  <main>
+  <p id="authStatus" role="status" style="max-width:900px;margin:24px auto;padding:16px">管理者権限を確認しています…</p>
+  <main hidden>
+    <p style="margin:0 0 16px"><a href="admin.html" style="color:#443088;font-weight:700">← 管理者トップに戻る</a></p>
     <h1>催事編集</h1>
     <p class="lead">催事名・場所・説明・時間・写真を画面上で編集できます。</p>
-    <p class="notice"><strong>使い方：</strong>① 催事を編集 ② 「events.jsonをダウンロード」 ③ 公開先の同名ファイルと置き換え。写真もこのファイルに含まれます。公開中のページを開いている場合、この画面での編集だけでは来場者のページには反映されません。</p>
+    <p class="notice"><strong>使い方：</strong>催事名・場所・説明・時間・写真を編集し、「更新して公開」を押してください。保存が完了すると来場者向けのページに反映されます。催事を追加した場合は、混雑状況管理ページで「未登録の催事を登録」も実行してください。</p>
     <div class="toolbar">
-      <label class="import-label">以前のevents.jsonを読み込む<input id="importFile" type="file" accept="application/json,.json"></label>
       <button id="reload" type="button">公開中のデータを再読み込み</button>
-      <button id="download" class="primary" type="button">events.jsonをダウンロード</button>
+      <button id="publish" class="primary" type="button">更新して公開</button>
     </div>
     <p id="status" class="status" role="status" aria-live="polite">催事データを読み込んでいます…</p>
     <div id="zones"></div>
@@ -31,13 +32,13 @@
   <script>
     const order=["3f","2f","1f","gymA","gymB","admin","courtyard"];
     const names={"3f":"校舎 3階","2f":"校舎 2階","1f":"校舎 1階",gymA:"第1体育館",gymB:"第2体育館",admin:"管理棟",courtyard:"中庭"};
-    const zones=document.getElementById("zones"),status=document.getElementById("status"),download=document.getElementById("download");
-    let data={},dirty=false,pendingImages=0;
+    const zones=document.getElementById("zones"),status=document.getElementById("status"),publish=document.getElementById("publish");
+    let data={},baseline={},currentRevision=null,dirty=false,pendingImages=0,loadEventsData,saveEventsData;
     const safe=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
     function setStatus(message,error=false){status.textContent=message;status.classList.toggle("error",error)}
     function validData(value){return value&&typeof value==="object"&&!Array.isArray(value)&&Object.values(value).every(zone=>zone&&typeof zone==="object"&&Array.isArray(zone.items)&&zone.items.every(item=>item&&typeof item==="object"&&!Array.isArray(item)))}
     function newId(){return typeof crypto!=="undefined"&&crypto.randomUUID?crypto.randomUUID():`event-${Date.now()}-${Math.random().toString(36).slice(2)}`}
-    function markDirty(){dirty=true;setStatus("未保存の変更があります。編集後はevents.jsonをダウンロードしてください。")}
+    function markDirty(){dirty=true;setStatus("未公開の変更があります。「更新して公開」を押してください。")}
     function card(item,index){
       const el=document.createElement("article");el.className="event";el.dataset.eventId=item.id||newId();el._original=item;el._image=item.image||"";
       el.innerHTML=`<div class="event-top"><span class="event-number">催事 ${index+1}</span><button class="delete" type="button">削除</button></div>
@@ -55,10 +56,10 @@
       showPhoto();
       el.querySelector(".photo-input").addEventListener("change",async e=>{
         const file=e.target.files[0];if(!file)return;
-        pendingImages++;download.disabled=true;setStatus("写真を処理しています…");
+        pendingImages++;publish.disabled=true;setStatus("写真を処理しています…");
         try{el._image=await compressImage(file);showPhoto();markDirty()}
         catch(error){setStatus(error.message||"写真を読み込めませんでした。別の画像を選んでください。",true)}
-        finally{pendingImages--;download.disabled=pendingImages>0;e.target.value=""}
+        finally{pendingImages--;publish.disabled=pendingImages>0;e.target.value=""}
       });
       remove.addEventListener("click",()=>{el._image="";showPhoto();markDirty()});
       el.querySelector(".delete").addEventListener("click",()=>{if(!confirm("この催事を削除しますか？"))return;const zone=el.closest(".zone");el.remove();number(zone);markDirty()});
@@ -71,12 +72,16 @@
       try{
         const image=new Image();
         await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;image.src=source});
-        const scale=Math.min(1,1200/Math.max(image.naturalWidth,image.naturalHeight));
-        const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
-        const context=canvas.getContext("2d");context.fillStyle="#fff";context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
+        const canvas=document.createElement("canvas");
         let output="";
-        for(const quality of [.82,.7,.55,.4]){output=canvas.toDataURL("image/jpeg",quality);if(output.length<800000)break}
-        if(output.length>=800000)throw new Error("写真の容量が大きすぎます。小さい画像を選んでください。");
+        for(const maxSize of [1200,1000,800,600]){
+          const scale=Math.min(1,maxSize/Math.max(image.naturalWidth,image.naturalHeight));
+          canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+          const context=canvas.getContext("2d");context.fillStyle="#fff";context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
+          for(const quality of [.82,.7,.55,.4]){output=canvas.toDataURL("image/jpeg",quality);if(output.length<180000)break}
+          if(output.length<180000)break;
+        }
+        if(output.length>=180000)throw new Error("写真の容量が大きすぎます。小さい画像を選んでください。");
         return output;
       }finally{URL.revokeObjectURL(source)}
     }
@@ -103,30 +108,41 @@
       });
       return result;
     }
-    function acceptData(value,message){if(!validData(value))throw new Error("催事データの形式が正しくありません。");data=value;render();dirty=false;setStatus(message)}
+    function acceptData(value,message,revision){if(!validData(value))throw new Error("催事データの形式が正しくありません。");data=value;baseline=JSON.parse(JSON.stringify(value));currentRevision=revision;render();dirty=false;setStatus(message)}
     async function load(){
       if(dirty&&!confirm("未保存の変更を破棄して、公開中のデータを読み込みますか？"))return;
-      setStatus("催事データを読み込んでいます…");
-      try{const res=await fetch("events.json",{cache:"no-store"});if(!res.ok)throw new Error();acceptData(await res.json(),"現在のevents.jsonを読み込みました。")}
-      catch{setStatus("自動で読み込めませんでした。「以前のevents.jsonを読み込む」からファイルを選択してください。",true)}
+      setStatus("公開中の催事データを読み込んでいます…");
+      try{
+        const result=await loadEventsData();
+        acceptData(result.data,result.source==="firestore"?"公開中の催事データを読み込みました。":"初回用の催事データを読み込みました。更新ボタンで公開できます。",result.revision);
+        if(result.warning)setStatus("公開データを取得できないため予備データを表示しています。通信とFirestoreの設定を確認してください。",true);
+      }catch(error){setStatus(error.message||"催事データを読み込めませんでした。",true)}
     }
     document.getElementById("reload").addEventListener("click",load);
-    document.getElementById("importFile").addEventListener("change",async e=>{
-      const file=e.target.files[0];if(!file)return;
-      if(dirty&&!confirm("未保存の変更を破棄して、選択したファイルを読み込みますか？")){e.target.value="";return}
-      try{acceptData(JSON.parse(await file.text()),"選択したファイルを読み込みました。")}catch(error){setStatus(error.message||"JSONファイルを読み込めませんでした。",true)}
-      e.target.value="";
-    });
-    download.addEventListener("click",()=>{
+    publish.addEventListener("click",async()=>{
       if(pendingImages)return;
       const result=updated();
-      if(Object.values(result).some(zone=>zone.items.some(item=>!item.name))){setStatus("催事名が空欄の催事があります。入力してからダウンロードしてください。",true);return}
-      const blob=new Blob([JSON.stringify(result,null,2)+"\n"],{type:"application/json"});
-      const url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download="events.json";link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);
-      dirty=false;setStatus("events.jsonをダウンロードしました。公開先の同名ファイルと置き換えてください。");
+      if(Object.values(result).some(zone=>zone.items.some(item=>!item.name))){setStatus("催事名が空欄の催事があります。入力してから更新してください。",true);return}
+      publish.disabled=true;document.getElementById("reload").disabled=true;zones.inert=true;setStatus("催事データを公開しています…");
+      try{
+        currentRevision=await saveEventsData(result,baseline,currentRevision);
+        data=result;baseline=JSON.parse(JSON.stringify(result));dirty=false;
+        setStatus("公開が完了しました。来場者向けページにも新しい内容が反映されます。");
+      }catch(error){setStatus(error.code==="permission-denied"?"保存権限がありません。Firebaseのルールと管理者権限を確認してください。":error.message||"公開に失敗しました。通信と権限を確認してください。",true)}
+      finally{publish.disabled=pendingImages>0;document.getElementById("reload").disabled=false;zones.inert=false}
     });
     window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue=""}});
-    load();
+    let initialized=false;
+    Promise.all([import("./admin-access.js"),import("./event-data.js")]).then(([{watchAdmin},events])=>{
+      loadEventsData=events.loadEventsData;saveEventsData=events.saveEventsData;
+      watchAdmin({
+      checking:message=>{document.querySelector("main").hidden=true;document.getElementById("authStatus").hidden=false;document.getElementById("authStatus").textContent=message||"管理者権限を確認しています…"},
+      authorized:()=>{document.getElementById("authStatus").hidden=true;document.querySelector("main").hidden=false;if(!initialized){initialized=true;load()}},
+      unauthorized:()=>location.replace("admin.html?next=editor.html"),
+      signedOut:()=>location.replace("admin.html?next=editor.html"),
+      failed:()=>{document.getElementById("authStatus").textContent="管理者権限を確認できません。通信を確認して再読み込みしてください。"},
+      });
+    }).catch(()=>{document.getElementById("authStatus").textContent="管理者用ページを読み込めません。通信を確認して再読み込みしてください。"});
   </script>
 </body>
 </html>
