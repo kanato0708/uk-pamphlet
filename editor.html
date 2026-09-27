@@ -4,85 +4,128 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#18344d">
-  <title>催事データ編集｜宇工祭2026</title>
+  <title>催事編集｜宇工祭</title>
   <style>
-    :root{--ink:#18344d;--orange:#e8793b;--paper:#f4ecd9;--cream:#fffdf8;--line:#d7c7aa;--muted:#617384}
-    *{box-sizing:border-box} body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif}
-    main{width:min(100%,900px);min-height:100dvh;margin:auto;padding:24px 16px 48px;background:rgba(255,253,248,.86)}
-    h1{margin:0;font-size:25px}.lead{margin:8px 0 18px;color:var(--muted);font-size:13px;line-height:1.65}.notice{margin:0 0 18px;padding:11px 13px;border:2px solid var(--ink);border-radius:6px;background:#fff;font-size:12px;line-height:1.65}
-    .toolbar{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:20px}button,.import-label{appearance:none;display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 13px;border:2px solid var(--ink);border-radius:5px;background:var(--cream);color:var(--ink);box-shadow:2px 2px 0 var(--ink);font:700 13px inherit;cursor:pointer}.primary{background:var(--orange);color:#fff}.import-label input{display:none}
-    .status{margin:0 0 14px;color:var(--muted);font-size:12px}.zone{margin:0 0 18px;border:3px solid var(--ink);border-radius:7px;background:rgba(255,255,255,.84);overflow:hidden}.zone-head{padding:11px 13px;border-bottom:2px solid var(--ink);background:var(--cream)}.zone-head h2{margin:0;font-size:17px}.zone-head small{color:var(--muted);font-weight:600}
-    .events{padding:10px;display:grid;gap:10px}.event{padding:11px;border:2px solid var(--line);border-radius:5px;background:#fff}.event-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.event-number{font-size:12px;font-weight:800}.delete{min-height:auto;padding:5px 8px;border-color:#b74d42;color:#a33e35;box-shadow:none;font-size:11px}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}label{display:grid;gap:4px;color:var(--muted);font-size:11px;font-weight:700}.wide{grid-column:1/-1}input,textarea,select{width:100%;border:1.5px solid var(--ink);border-radius:4px;padding:8px;background:#fffdf8;color:var(--ink);font:14px inherit}textarea{min-height:70px;resize:vertical}.add{margin:0 10px 12px;min-height:36px;box-shadow:none;font-size:12px}@media(max-width:480px){main{padding-inline:12px}.fields{grid-template-columns:1fr}}
+    :root{--ink:#18344d;--orange:#c75b23;--paper:#f4ecd9;--cream:#fffdf8;--line:#d7c7aa;--muted:#526577}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif}
+    main{width:min(100%,900px);min-height:100dvh;margin:auto;padding:24px 16px 48px;background:rgba(255,253,248,.9)}
+    h1{margin:0;font-size:25px}.lead{margin:8px 0 18px;color:var(--muted);font-size:14px;line-height:1.65}.notice{margin:0 0 18px;padding:12px 14px;border:2px solid var(--ink);border-radius:6px;background:#fff;font-size:13px;line-height:1.65}
+    .toolbar{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:16px}button,.import-label,.photo-label{appearance:none;display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 13px;border:2px solid var(--ink);border-radius:5px;background:var(--cream);color:var(--ink);box-shadow:2px 2px 0 var(--ink);font:700 13px/1.3 inherit;cursor:pointer}.primary{background:var(--orange);color:#fff}.import-label input,.photo-label input{position:absolute;width:1px;height:1px;opacity:0}.import-label:focus-within,.photo-label:focus-within,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #397cad;outline-offset:2px}button:disabled{opacity:.55;cursor:wait}
+    .status{margin:0 0 14px;color:var(--muted);font-size:13px;min-height:1.5em}.status.error{color:#9e332d}.zone{margin:0 0 18px;border:3px solid var(--ink);border-radius:7px;background:rgba(255,255,255,.84);overflow:hidden}.zone-head{padding:11px 13px;border-bottom:2px solid var(--ink);background:var(--cream)}.zone-head h2{margin:0;font-size:17px}.zone-head small{color:var(--muted);font-weight:600}
+    .events{padding:10px;display:grid;gap:10px}.event{padding:12px;border:2px solid var(--line);border-radius:5px;background:#fff}.event-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.event-number{font-size:13px;font-weight:800}.delete{min-height:34px;padding:5px 8px;border-color:#a33e35;color:#a33e35;box-shadow:none;font-size:12px}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}label.field{display:grid;gap:4px;color:var(--muted);font-size:12px;font-weight:700}.wide{grid-column:1/-1}input:not([type=file]),textarea,select{width:100%;border:1.5px solid var(--ink);border-radius:4px;padding:9px;background:#fffdf8;color:var(--ink);font:14px inherit}textarea{min-height:82px;resize:vertical}.photo-panel{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.photo-preview{display:none;width:170px;max-width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid var(--line);border-radius:4px}.photo-preview.has-image{display:block}.photo-actions{display:flex;flex-wrap:wrap;gap:8px}.photo-actions button{box-shadow:none}.photo-help{display:block;font-weight:400;font-size:12px}.add{margin:0 10px 12px;min-height:38px;box-shadow:none;font-size:13px}@media(max-width:480px){main{padding-inline:12px}.fields{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <main>
-    <h1>催事データ編集</h1>
-    <p class="lead">催事名・カテゴリ・場所・時間・説明を編集し、完成したデータをダウンロードできます。</p>
-    <p class="notice">ダウンロードした <strong>events.json</strong> で、このフォルダ内の同名ファイルを置き換えてください。GitHub Pagesで公開している場合は、置き換えたファイルをアップロードします。</p>
+    <h1>催事編集</h1>
+    <p class="lead">催事名・場所・説明・時間・写真を画面上で編集できます。</p>
+    <p class="notice"><strong>使い方：</strong>① 催事を編集 ② 「events.jsonをダウンロード」 ③ 公開先の同名ファイルと置き換え。写真もこのファイルに含まれます。公開中のページを開いている場合、この画面での編集だけでは来場者のページには反映されません。</p>
     <div class="toolbar">
-      <label class="import-label">events.jsonを読み込む<input id="importFile" type="file" accept="application/json,.json"></label>
-      <button id="reload" type="button">元のデータを再読み込み</button>
+      <label class="import-label">以前のevents.jsonを読み込む<input id="importFile" type="file" accept="application/json,.json"></label>
+      <button id="reload" type="button">公開中のデータを再読み込み</button>
       <button id="download" class="primary" type="button">events.jsonをダウンロード</button>
     </div>
-    <p id="status" class="status">催事データを読み込んでいます…</p>
+    <p id="status" class="status" role="status" aria-live="polite">催事データを読み込んでいます…</p>
     <div id="zones"></div>
   </main>
   <script>
     const order=["3f","2f","1f","gymA","gymB","admin","courtyard"];
     const names={"3f":"校舎 3階","2f":"校舎 2階","1f":"校舎 1階",gymA:"第1体育館",gymB:"第2体育館",admin:"管理棟",courtyard:"中庭"};
-    let data={};
-    const zones=document.getElementById("zones"),status=document.getElementById("status");
-    const safe=value=>String(value||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const zones=document.getElementById("zones"),status=document.getElementById("status"),download=document.getElementById("download");
+    let data={},dirty=false,pendingImages=0;
+    const safe=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    function setStatus(message,error=false){status.textContent=message;status.classList.toggle("error",error)}
+    function validData(value){return value&&typeof value==="object"&&!Array.isArray(value)&&Object.values(value).every(zone=>zone&&typeof zone==="object"&&Array.isArray(zone.items)&&zone.items.every(item=>item&&typeof item==="object"&&!Array.isArray(item)))}
+    function newId(){return typeof crypto!=="undefined"&&crypto.randomUUID?crypto.randomUUID():`event-${Date.now()}-${Math.random().toString(36).slice(2)}`}
+    function markDirty(){dirty=true;setStatus("未保存の変更があります。編集後はevents.jsonをダウンロードしてください。")}
     function card(item,index){
-      const el=document.createElement("article"); el.className="event";
-      el.dataset.eventId=item.id||crypto.randomUUID();
-      const category=item.category||"団体・案内";
-      el.innerHTML='<div class="event-top"><span class="event-number">催事 '+(index+1)+'</span><button class="delete" type="button">削除</button></div><div class="fields"><label>催事名<input data-field="name" value="'+safe(item.name)+'"></label><label>カテゴリ<select data-field="category"><option value="飲食">飲食</option><option value="遊ぶ・体験">遊ぶ・体験</option><option value="展示・ステージ">展示・ステージ</option><option value="団体・案内">団体・案内</option></select></label><label>場所<input data-field="room" value="'+safe(item.room)+'"></label><label>時間<input data-field="time" value="'+safe(item.time)+'" placeholder="例：10:00〜12:00"></label><label class="wide">説明<textarea data-field="desc">'+safe(item.desc)+'</textarea></label></div>';
-      el.querySelector('[data-field="category"]').value=category;
-      el.querySelector(".delete").addEventListener("click",()=>{const zone=el.closest(".zone");el.remove();number(zone)});
+      const el=document.createElement("article");el.className="event";el.dataset.eventId=item.id||newId();el._original=item;el._image=item.image||"";
+      el.innerHTML=`<div class="event-top"><span class="event-number">催事 ${index+1}</span><button class="delete" type="button">削除</button></div>
+        <div class="fields">
+          <label class="field">催事名<input data-field="name" value="${safe(item.name)}"></label>
+          <label class="field">カテゴリ<select data-field="category"><option>飲食</option><option>遊ぶ・体験</option><option>展示・ステージ</option><option>団体・案内</option></select></label>
+          <label class="field">場所<input data-field="room" value="${safe(item.room)}"></label>
+          <label class="field">時間<input data-field="time" value="${safe(item.time)}" placeholder="例：10:00〜12:00"></label>
+          <label class="field wide">説明<textarea data-field="desc">${safe(item.desc)}</textarea></label>
+          <div class="wide"><span class="field">写真</span><div class="photo-panel"><img class="photo-preview" alt="選択中の催事写真"><div class="photo-actions"><label class="photo-label">写真を選ぶ<input class="photo-input" type="file" accept="image/*"></label><button class="remove-photo" type="button">写真を削除</button></div></div><span class="photo-help">JPEG・PNG・WebPなどの画像を選べます。自動で縮小してデータに含めます。</span></div>
+        </div>`;
+      el.querySelector('[data-field="category"]').value=item.category||"団体・案内";
+      const preview=el.querySelector(".photo-preview"),remove=el.querySelector(".remove-photo");
+      function showPhoto(){const hasImage=Boolean(el._image);preview.classList.toggle("has-image",hasImage);if(hasImage)preview.src=el._image;else preview.removeAttribute("src");remove.disabled=!hasImage}
+      showPhoto();
+      el.querySelector(".photo-input").addEventListener("change",async e=>{
+        const file=e.target.files[0];if(!file)return;
+        pendingImages++;download.disabled=true;setStatus("写真を処理しています…");
+        try{el._image=await compressImage(file);showPhoto();markDirty()}
+        catch(error){setStatus(error.message||"写真を読み込めませんでした。別の画像を選んでください。",true)}
+        finally{pendingImages--;download.disabled=pendingImages>0;e.target.value=""}
+      });
+      remove.addEventListener("click",()=>{el._image="";showPhoto();markDirty()});
+      el.querySelector(".delete").addEventListener("click",()=>{if(!confirm("この催事を削除しますか？"))return;const zone=el.closest(".zone");el.remove();number(zone);markDirty()});
+      el.querySelectorAll("input[data-field],select,textarea").forEach(input=>input.addEventListener("input",markDirty));
       return el;
     }
-    function number(zone){zone.querySelectorAll(".event-number").forEach((el,i)=>el.textContent="催事 "+(i+1))}
+    async function compressImage(file){
+      if(!file.type.startsWith("image/"))throw new Error("画像ファイルを選んでください。");
+      const source=URL.createObjectURL(file);
+      try{
+        const image=new Image();
+        await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;image.src=source});
+        const scale=Math.min(1,1200/Math.max(image.naturalWidth,image.naturalHeight));
+        const canvas=document.createElement("canvas");canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+        const context=canvas.getContext("2d");context.fillStyle="#fff";context.fillRect(0,0,canvas.width,canvas.height);context.drawImage(image,0,0,canvas.width,canvas.height);
+        let output="";
+        for(const quality of [.82,.7,.55,.4]){output=canvas.toDataURL("image/jpeg",quality);if(output.length<800000)break}
+        if(output.length>=800000)throw new Error("写真の容量が大きすぎます。小さい画像を選んでください。");
+        return output;
+      }finally{URL.revokeObjectURL(source)}
+    }
+    function number(zone){zone.querySelectorAll(".event-number").forEach((el,i)=>el.textContent=`催事 ${i+1}`)}
     function render(){
-      zones.innerHTML="";
-      const ids=order.concat(Object.keys(data).filter(id=>!order.includes(id)));
-      ids.forEach(id=>{
+      zones.replaceChildren();
+      order.concat(Object.keys(data).filter(id=>!order.includes(id))).forEach(id=>{
         if(!data[id])return;
-        const section=document.createElement("section"); section.className="zone"; section.dataset.zone=id;
-        section.innerHTML='<div class="zone-head"><h2>'+safe(names[id]||data[id].label||id)+'</h2><small>'+safe(data[id].building)+'</small></div><div class="events"></div><button class="add" type="button">＋ 催事を追加</button>';
-        const events=section.querySelector(".events");
-        (data[id].items||[]).forEach((item,i)=>events.appendChild(card(item,i)));
-        section.querySelector(".add").addEventListener("click",()=>events.appendChild(card({},events.children.length)));
-        zones.appendChild(section);
+        const section=document.createElement("section");section.className="zone";section.dataset.zone=id;
+        section.innerHTML=`<div class="zone-head"><h2>${safe(names[id]||data[id].label||id)}</h2><small>${safe(data[id].building)}</small></div><div class="events"></div><button class="add" type="button">＋ 催事を追加</button>`;
+        const events=section.querySelector(".events");data[id].items.forEach((item,i)=>events.appendChild(card(item,i)));
+        section.querySelector(".add").addEventListener("click",()=>{events.appendChild(card({},events.children.length));markDirty()});zones.appendChild(section);
       });
     }
     function updated(){
       const result=JSON.parse(JSON.stringify(data));
       document.querySelectorAll(".zone").forEach(section=>{
         result[section.dataset.zone].items=[...section.querySelectorAll(".event")].map(card=>{
-          const get=field=>card.querySelector('[data-field="'+field+'"]').value.trim();
-          return {id:card.dataset.eventId,name:get("name"),category:get("category"),room:get("room"),time:get("time"),desc:get("desc")};
+          const get=field=>card.querySelector(`[data-field="${field}"]`).value.trim();
+          const item={...card._original,id:card.dataset.eventId,name:get("name"),category:get("category"),room:get("room"),time:get("time"),desc:get("desc")};
+          if(card._image)item.image=card._image;else delete item.image;
+          return item;
         });
       });
       return result;
     }
+    function acceptData(value,message){if(!validData(value))throw new Error("催事データの形式が正しくありません。");data=value;render();dirty=false;setStatus(message)}
     async function load(){
-      status.textContent="催事データを読み込んでいます…";
-      try{const res=await fetch("events.json",{cache:"no-store"});if(!res.ok)throw new Error();data=await res.json();render();status.textContent="現在の events.json を読み込みました。"}
-      catch{status.textContent="自動で読み込めませんでした。「events.jsonを読み込む」からファイルを選択してください。"}
+      if(dirty&&!confirm("未保存の変更を破棄して、公開中のデータを読み込みますか？"))return;
+      setStatus("催事データを読み込んでいます…");
+      try{const res=await fetch("events.json",{cache:"no-store"});if(!res.ok)throw new Error();acceptData(await res.json(),"現在のevents.jsonを読み込みました。")}
+      catch{setStatus("自動で読み込めませんでした。「以前のevents.jsonを読み込む」からファイルを選択してください。",true)}
     }
     document.getElementById("reload").addEventListener("click",load);
     document.getElementById("importFile").addEventListener("change",async e=>{
-      try{data=JSON.parse(await e.target.files[0].text());render();status.textContent="選択したファイルを読み込みました。"}
-      catch{status.textContent="読み込めませんでした。正しいJSONファイルを選択してください。"}
+      const file=e.target.files[0];if(!file)return;
+      if(dirty&&!confirm("未保存の変更を破棄して、選択したファイルを読み込みますか？")){e.target.value="";return}
+      try{acceptData(JSON.parse(await file.text()),"選択したファイルを読み込みました。")}catch(error){setStatus(error.message||"JSONファイルを読み込めませんでした。",true)}
+      e.target.value="";
     });
-    document.getElementById("download").addEventListener("click",()=>{
-      const blob=new Blob([JSON.stringify(updated(),null,2)+"\n"],{type:"application/json"});
-      const url=URL.createObjectURL(blob),link=document.createElement("a");
-      link.href=url;link.download="events.json";link.click();URL.revokeObjectURL(url);
-      status.textContent="events.jsonをダウンロードしました。元のファイルと置き換えてください。";
+    download.addEventListener("click",()=>{
+      if(pendingImages)return;
+      const result=updated();
+      if(Object.values(result).some(zone=>zone.items.some(item=>!item.name))){setStatus("催事名が空欄の催事があります。入力してからダウンロードしてください。",true);return}
+      const blob=new Blob([JSON.stringify(result,null,2)+"\n"],{type:"application/json"});
+      const url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download="events.json";link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);
+      dirty=false;setStatus("events.jsonをダウンロードしました。公開先の同名ファイルと置き換えてください。");
     });
+    window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue=""}});
     load();
   </script>
 </body>
