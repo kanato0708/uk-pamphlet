@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#18344d">
+  <title>生徒会役員用トップ｜宇工祭</title>
+  <style>
+    :root{--ink:#18344d;--purple:#443088;--paper:#f4ecd9;--muted:#526577}
+    *{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;line-height:1.6}
+    main{width:min(100%,850px);min-height:100dvh;margin:auto;padding:32px 18px 54px;background:#fffdf8}
+    .eyebrow{margin:0 0 5px;color:var(--purple);font-size:13px;font-weight:800;letter-spacing:.08em}h1{margin:0 0 8px;font-size:clamp(25px,5vw,34px)}h2{margin:0 0 16px;font-size:20px}.lead{margin:0 0 24px;color:var(--muted)}
+    .status{padding:13px 15px;border-left:4px solid var(--purple);background:#f0ecf7;border-radius:5px;margin:0 0 22px}.card{background:#fff;border:1px solid #d7c7aa;border-radius:10px;padding:22px;margin-bottom:20px;box-shadow:2px 3px 0 #d7c7aa}
+    label{display:block;font-weight:700;margin-bottom:15px}input{display:block;width:100%;min-height:48px;margin-top:6px;padding:10px;border:1.5px solid var(--ink);border-radius:5px;font:inherit}button{min-height:46px;padding:10px 17px;border:2px solid var(--ink);border-radius:5px;background:#fff;color:var(--ink);font:700 15px inherit;cursor:pointer}.primary{width:100%;background:var(--purple);color:#fff;border-color:var(--purple)}button:disabled{opacity:.6;cursor:wait}a{color:var(--purple)}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #397cad;outline-offset:3px}
+    .session{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}.session p{margin:0;overflow-wrap:anywhere}.links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.tool-link{display:block;min-height:140px;padding:20px;border:2px solid var(--ink);border-radius:9px;background:#fff;text-decoration:none;color:var(--ink);box-shadow:3px 4px 0 var(--ink)}.tool-link strong{display:block;font-size:20px;margin-bottom:8px}.tool-link span{display:block;color:var(--muted);font-size:14px}.tool-link:hover{background:#f4f0fc}.back{display:inline-block;margin-top:24px;font-weight:700}@media(max-width:590px){.links{grid-template-columns:1fr}.tool-link{min-height:auto}}
+  </style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">宇工祭 · 生徒会役員用</p>
+  <h1>管理者トップ</h1>
+  <p class="lead">催事や混雑状況の管理、モニター表示はこちらから行います。</p>
+  <p id="status" class="status" role="status" aria-live="polite">ログイン状態を確認しています…</p>
+  <section id="loginPanel" class="card" hidden>
+    <h2>管理者ログイン</h2>
+    <form id="loginForm">
+      <label>メールアドレス<input id="email" type="email" autocomplete="username" required></label>
+      <label>パスワード<input id="password" type="password" autocomplete="current-password" required></label>
+      <button id="loginButton" class="primary" type="submit">ログイン</button>
+    </form>
+  </section>
+  <section id="menuPanel" hidden>
+    <div class="session"><p id="identity"></p><button id="logout" type="button">ログアウト</button></div>
+    <div class="links">
+      <a class="tool-link" href="editor.html"><strong>催事を編集</strong><span>催事名・場所・説明・時間・写真を編集します。</span></a>
+      <a class="tool-link" href="crowd-admin.html"><strong>混雑状況を更新</strong><span>担当催事の状況や、係の権限を管理します。</span></a>
+      <a class="tool-link" href="monitor.html"><strong>モニター掲示用ページ</strong><span>会場の混雑状況を大きな画面で表示します。</span></a>
+    </div>
+  </section>
+  <a class="back" href="index.html">← パンフレットに戻る</a>
+</main>
+<script type="module" src="admin.js"></script>
+</body>
+</html>
