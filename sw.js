@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ukousai2026-v15-monitor-colors';
+const CACHE_NAME = 'ukousai2026-v18-live-events';
 const ASSETS = [
   './',
   './index.html',
@@ -12,6 +12,7 @@ const ASSETS = [
   './crowd-model.js',
   './crowd-view.js',
   './crowd-firebase.js',
+  './event-data.js',
   './firebase-config.js',
   './monitor.html',
   './monitor.js',
@@ -41,7 +42,7 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET' || url.origin !== self.location.origin) return;
-  if (url.pathname.endsWith('/crowd-admin.html') || url.pathname.endsWith('/crowd-admin.js')) return;
+  if (['/admin.html', '/admin.js', '/admin-access.js', '/editor.html', '/crowd-admin.html', '/crowd-admin.js'].some(path => url.pathname.endsWith(path))) return;
   const isLiveAsset = e.request.mode === 'navigate' || /\.(html|json|js|css)$/.test(url.pathname);
   if (isLiveAsset) {
     const cacheKey = new Request(url.origin + url.pathname);
