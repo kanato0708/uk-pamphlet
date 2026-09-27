@@ -7,6 +7,7 @@ import {
   watchCrowd, updateCrowd, initializeCrowd,
 } from "./crowd-firebase.js";
 import {STATUS, crowdState, flattenEvents} from "./crowd-model.js";
+import {loadEventsData, watchEventsVersion} from "./event-data.js";
 
 const $ = id => document.getElementById(id);
 const auth = getAuth(app);
@@ -22,6 +23,7 @@ let adminWatching = false;
 let people = new Map();
 let recentHistory = [];
 const pending = new Set();
+let eventDataRequest = 0;
 
 function message(text) { $("message").textContent = text; }
 function failure(error) {
@@ -74,6 +76,22 @@ function renderCards() {
     location.textContent = event.room || event.zoneLabel;
     const heading = document.createElement("h3");
     heading.textContent = event.name;
+    const details = [];
+    for (const value of [event.category, event.time, event.desc]) {
+      if (!value) continue;
+      const line = document.createElement("p");
+      line.className = "event-info";
+      line.textContent = value;
+      details.push(line);
+    }
+    if (typeof event.image === "string" && /^data:image\/(?:jpeg|png|webp);base64,[a-z\d+/=]+$/i.test(event.image)) {
+      const photo = document.createElement("img");
+      photo.className = "event-photo";
+      photo.src = event.image;
+      photo.alt = `${event.name}の写真`;
+      photo.loading = "lazy";
+      details.push(photo);
+    }
     const badge = document.createElement("p");
     badge.className = "crowd-badge";
     const buttons = document.createElement("div");
@@ -101,7 +119,7 @@ function renderCards() {
       });
       buttons.append(button);
     }
-    card.append(location, heading, badge, buttons);
+    card.append(location, heading, ...details, badge, buttons);
     $("eventCards").append(card);
   }
   if (!visible.length) $("eventCards").textContent = "担当する催事がありません。管理者に割り当てを依頼してください。";
@@ -172,6 +190,23 @@ function renderHistory() {
   }
   if (!recentHistory.length) $("history").textContent = "更新履歴はまだありません。";
 }
+async function refreshEvents() {
+  const request = ++eventDataRequest;
+  const result = await loadEventsData();
+  const nextEvents = flattenEvents(result.data);
+  if (request !== eventDataRequest) return result.revision;
+  events = nextEvents;
+  $("eventDataStatus").textContent = result.warning
+    ? "公開中の催事情報を取得できず、予備データを表示しています。通信とFirestoreの設定を確認してください。"
+    : result.source === "firestore"
+      ? `公開中の催事情報を表示しています（${events.length}件）。`
+      : "初回用の予備データを表示しています。催事編集ページで公開してください。";
+  const selected = [...$("assignments").querySelectorAll("input:checked")].map(input => input.value);
+  renderAssignments(selected);
+  if (profile?.active) renderCards();
+  if (isAdmin()) renderHistory();
+  return result.revision;
+}
 function startAdmin() {
   if (adminWatching) return;
   adminWatching = true;
@@ -231,10 +266,8 @@ $("permissionForm").addEventListener("submit", async event => {
 });
 
 try {
-  const response = await fetch("events.json", {cache: "no-store"});
-  if (!response.ok) throw new Error("催事データを読み込めません。events.jsonの配置を確認してください。");
-  events = flattenEvents(await response.json());
-  renderAssignments();
+  const revision = await refreshEvents();
+  watchEventsVersion(() => refreshEvents().catch(error => message(failure(error))), revision);
   $("loginButton").disabled = false;
   message("登録済みのアカウントでログインしてください。");
   onAuthStateChanged(auth, nextUser => {
@@ -277,5 +310,9 @@ try {
   });
 } catch (error) { message(failure(error)); }
 window.addEventListener("offline", renderStatuses);
-window.addEventListener("online", () => { fresh = false; renderStatuses(); });
+window.addEventListener("online", () => {
+  fresh = false;
+  renderStatuses();
+  refreshEvents().catch(error => message(failure(error)));
+});
 setInterval(renderStatuses, 30000);
