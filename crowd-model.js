@@ -29,7 +29,7 @@ export function flattenEvents(data) {
     for (const item of group.items) {
       if (!item.name || item.name === "（なし）") continue;
       if (typeof item.id !== "string" || !/^[A-Za-z0-9_-]{1,100}$/.test(item.id) || ids.has(item.id)) {
-        throw new Error("催事IDが未設定または重複しています。最新のevents.jsonをアップロードしてください。");
+        throw new Error("催事IDが未設定または重複しています。公開中の催事データを確認してください。");
       }
       ids.add(item.id);
       result.push({...item, zone, zoneLabel: group.label || zone});
