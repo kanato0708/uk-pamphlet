@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
   <title>混雑状況の管理｜宇工祭2026</title>
-  <link rel="stylesheet" href="crowd.css">
+  <link rel="stylesheet" href="crowd.css?v=20260925-colors">
   <style>
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
@@ -39,15 +39,17 @@
     #eventCards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
     #eventCards .card { margin: 0; display: flex; flex-direction: column; padding: 24px; min-width: 0; }
     .event-location { margin: 0 0 6px; font-size: 14px; font-weight: 700; color: #526577; }
+    .event-info { margin: 0 0 8px; font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+    .event-photo { display: block; width: min(100%, 240px); max-height: 150px; object-fit: cover; margin: 4px 0 16px; border-radius: 8px; }
     #eventCards .crowd-badge { align-self: flex-start; font-size: 14px; padding: 7px 10px; border-radius: 7px; margin: 0 0 20px; }
     .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: auto; }
     .choices button { min-height: 56px; border: 2px solid transparent; padding: 10px 6px; }
     .choices button[aria-pressed=true] { border-color: currentColor; box-shadow: 0 0 0 2px #fff inset; }
     .choices button[aria-pressed=true]::before { content: "✓ "; }
-    .choices [data-status=quiet] { background: #e4f4e8; color: #205b34; }
-    .choices [data-status=moderate] { background: #fff2ce; color: #745100; }
-    .choices [data-status=busy] { background: #fce4e4; color: #9c2424; }
-    .choices [data-status=closed] { background: #e9e3f7; color: #443088; }
+    .choices [data-status=quiet] { background: var(--crowd-quiet-bg); color: var(--crowd-quiet-fg); }
+    .choices [data-status=moderate] { background: var(--crowd-moderate-bg); color: var(--crowd-moderate-fg); }
+    .choices [data-status=busy] { background: var(--crowd-busy-bg); color: var(--crowd-busy-fg); }
+    .choices [data-status=closed] { background: var(--crowd-closed-bg); color: var(--crowd-closed-fg); }
     #adminPanel { margin-top: 40px; padding-top: 12px; border-top: 1px solid #cfd7dd; }
     fieldset { min-width: 0; border: 1px solid #cfd7dd; border-radius: 10px; padding: 16px; margin: 24px 0; }
     legend { padding: 0 8px; font-size: 15px; font-weight: 700; }
@@ -95,6 +97,7 @@
     <section id="eventSection" hidden>
       <h2>混雑状況を更新</h2>
       <p id="connection" class="muted" role="status">通信を確認しています…</p>
+      <p id="eventDataStatus" class="muted" role="status">催事情報を確認しています…</p>
       <div id="eventCards"></div>
     </section>
     <section id="adminPanel" hidden>
