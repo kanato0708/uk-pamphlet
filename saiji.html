@@ -618,16 +618,20 @@
         eventSearch = document.getElementById("eventSearch"),
         dataStatus = document.getElementById("dataStatus");
       let activeCategory = "";
-      async function loadEvents() {
+      async function loadEvents(resetSelection = false) {
         EVENTS = FALLBACK_EVENTS;
+        let revision = null;
         try {
-          const r = await fetch(`events.json?updated=${Date.now()}`, { cache: "no-store" });
-          if (!r.ok) throw new Error("データを取得できませんでした");
-          const loaded = await r.json();
+          const {loadEventsData} = await import("./event-data.js");
+          const {data: loaded, source, revision: loadedRevision, warning} = await loadEventsData();
           if (!loaded || typeof loaded !== "object") throw new Error("データ形式が正しくありません");
           EVENTS = loaded;
+          revision = loadedRevision;
           const count = Object.values(EVENTS).reduce((total, zone) => total + (zone.items || []).length, 0);
-          dataStatus.textContent = `催事データを読み込みました（${count}件）`;
+          dataStatus.classList.toggle("error", Boolean(warning));
+          dataStatus.textContent = warning
+            ? `公開データを取得できないため予備の催事データを表示しています（${count}件）。通信とFirestoreの設定を確認してください。`
+            : `${source === "firestore" ? "最新の催事データ" : "予備の催事データ"}を読み込みました（${count}件）`;
         } catch (e) {
           dataStatus.textContent = "催事データを読み込めなかったため、予備データを表示しています。";
           dataStatus.classList.add("error");
@@ -644,8 +648,17 @@
           });
         });
         if (eventSearch.value || activeCategory) searchEvents();
+        else if (resetSelection) {
+          activate(null);
+          detailTitle.textContent = "催し物を選んでください";
+          detailTag.textContent = "案内";
+          detailMeta.textContent = "";
+          eventList.innerHTML = '<div class="empty">教室または体育館をタップすると、ここに催し物の詳細が表示されます。</div>';
+        }
+        return revision;
       }
       function renderFloors() {
+        floors.replaceChildren();
         [
           ["3f", "3F", "1年生"],
           ["2f", "2F", "2年生"],
@@ -672,6 +685,7 @@
         return item.room ?? "";
       }
       function renderActivityZones() {
+        activityZones.replaceChildren();
         [
           ["admin", "管理棟"],
           ["courtyard", "中庭"],
@@ -704,25 +718,22 @@
         const data = EVENTS[zone],
           item = data.items[index];
         show(data.label + " " + item.name, data.building, item);
-        addPlaceholderImage();
         pinDetail();
       }
       function selectZone(zone, button) {
         activate(button);
         const data = EVENTS[zone];
         show(data.label, data.building, null, data.items || []);
-        addPlaceholderImage();
         pinDetail();
       }
       function pinDetail() {
         detail.classList.add("is-pinned");
         document.getElementById("app").classList.add("detail-pinned");
       }
-      function addPlaceholderImage() {
-        eventList.insertAdjacentHTML(
-          "afterbegin",
-          '<img class="event-image" src="no-image.svg" alt="催し物の写真は準備中">',
-        );
+      function eventImage(ev) {
+        const source = typeof ev.image === "string" && /^data:image\/(?:jpeg|png|webp);base64,[a-z\d+/=]+$/i.test(ev.image)
+          ? ev.image : "";
+        return source ? `<img class="event-image" src="${source}" alt="${escapeHTML(ev.name)}の写真" loading="lazy">` : "";
       }
       function show(title, tag, item, items) {
         detailTitle.textContent = title;
@@ -733,7 +744,7 @@
           ? list
               .map(
                 (ev) =>
-                  `<article class="event"${ev.id && ev.name !== "（なし）" ? ` data-crowd-id="${escapeHTML(ev.id)}"` : ""}><div class="event-top"><div class="event-name">${escapeHTML(ev.name)}</div>${ev.time ? `<div class="event-time">${escapeHTML(ev.time)}</div>` : ""}</div>${ev.room ? `<div class="event-room">${escapeHTML(ev.room)}</div>` : ""}${ev.desc ? `<div class="event-desc">${escapeHTML(ev.desc)}</div>` : ""}</article>`,
+                  `<article class="event"${ev.id && ev.name !== "（なし）" ? ` data-crowd-id="${escapeHTML(ev.id)}"` : ""}><div class="event-top"><div class="event-name">${escapeHTML(ev.name)}</div>${ev.time ? `<div class="event-time">${escapeHTML(ev.time)}</div>` : ""}</div>${ev.room ? `<div class="event-room">${escapeHTML(ev.room)}</div>` : ""}${ev.desc ? `<div class="event-desc">${escapeHTML(ev.desc)}</div>` : ""}${eventImage(ev)}</article>`,
               )
               .join("")
           : '<div class="empty">この会場の催し物は準備中です。</div>';
@@ -758,7 +769,7 @@
         detailTag.textContent = "検索";
         detailMeta.textContent = `${results.length}件`;
         eventList.innerHTML = results.length ? results.map((item) =>
-          `<article class="event"${item.id ? ` data-crowd-id="${escapeHTML(item.id)}"` : ""}><div class="event-top"><div class="event-name">${escapeHTML(item.name)}</div>${item.time ? `<div class="event-time">${escapeHTML(item.time)}</div>` : ""}</div><div class="event-room">${escapeHTML([item.zoneLabel, item.room].filter(Boolean).join(" · "))}</div><span class="event-category">${escapeHTML(item.category)}</span>${item.desc ? `<div class="event-desc">${escapeHTML(item.desc)}</div>` : ""}</article>`,
+          `<article class="event"${item.id ? ` data-crowd-id="${escapeHTML(item.id)}"` : ""}><div class="event-top"><div class="event-name">${escapeHTML(item.name)}</div>${item.time ? `<div class="event-time">${escapeHTML(item.time)}</div>` : ""}</div><div class="event-room">${escapeHTML([item.zoneLabel, item.room].filter(Boolean).join(" · "))}</div><span class="event-category">${escapeHTML(item.category)}</span>${item.desc ? `<div class="event-desc">${escapeHTML(item.desc)}</div>` : ""}${eventImage(item)}</article>`,
         ).join("") : '<div class="empty">条件に合う催事は見つかりませんでした。</div>';
         pinDetail();
       }
@@ -788,7 +799,12 @@
           searchEvents();
         }),
       );
-      loadEvents();
+      loadEvents().then(async revision => {
+        try {
+          const {watchEventsVersion} = await import("./event-data.js");
+          watchEventsVersion(() => loadEvents(true), revision);
+        } catch {}
+      });
       if ("serviceWorker" in navigator)
         window.addEventListener("load", () =>
           navigator.serviceWorker.register("sw.js").catch(() => {}),
