@@ -15,7 +15,9 @@
     <meta name="apple-mobile-web-app-title" content="宇工祭2026" />
     <title>宇工祭2026 デジタルパンフレット</title>
     <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="stylesheet" href="crowd.css" />
+    <link rel="stylesheet" href="announcement.css" />
     <link rel="icon" href="lion-favicon.ico" type="image/x-icon">
     <style>
       :root {
@@ -432,6 +434,7 @@
         <h1>宇工祭<span>2026</span></h1>
         <div class="theme">〜 唯一無二の瞬間を 〜</div>
       </header>
+      <aside class="announcement-bar" aria-label="お知らせ" hidden><span class="announcement-label">お知らせ</span><div class="announcement-window"><span class="announcement-text"></span></div></aside>
       <div class="intro">
         見たい教室・会場をタップすると、下に催し物の詳細が表示されます。
       </div>
@@ -840,5 +843,6 @@
         );
     </script>
     <script type="module" src="crowd-view.js"></script>
+    <script type="module" src="announcement.js"></script>
   </body>
 </html>
