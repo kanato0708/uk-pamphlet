@@ -8,6 +8,8 @@
   <meta name="apple-mobile-web-app-title" content="宇工祭2026">
   <title>校内マップ｜宇工祭2026</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="announcement.css">
   <link rel="icon" href="lion-favicon.ico" type="image/x-icon">
   <style>
     :root{--ink:#18344d;--orange:#e8793b;--cream:#fffdf8;--paper:#f4ecd9;--muted:#617384}
@@ -53,6 +55,7 @@
     <img class="mascot" src="uk-lion.png" alt="UKライオン">
     <div class="school">宇都宮工業高等学校</div><h1>宇工祭<span>2026</span></h1><div class="theme">〜 唯一無二の瞬間を 〜</div>
   </header>
+  <aside class="announcement-bar" aria-label="お知らせ" hidden><span class="announcement-label">お知らせ</span><div class="announcement-window"><span class="announcement-text"></span></div></aside>
   <h2 class="page-title">校内マップ</h2>
   <p class="intro">地図を動かして番号や体育館名をタップすると、今年の催事情報を確認できます。二本指でも拡大・縮小できます。</p>
   <p id="mapStatus" class="status" role="status">催事情報を読み込んでいます…</p>
@@ -82,6 +85,7 @@
   <div class="sheet-head"><h2 id="sheetTitle"></h2><button id="sheetClose" class="sheet-close" type="button" aria-label="詳細を閉じる">×</button></div>
   <div id="sheetEvents"></div>
 </section>
+<script type="module" src="announcement.js"></script>
 <script src="map-local-data.js"></script>
 <script>
   const mapWrap = document.getElementById('mapWrap');
