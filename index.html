@@ -23,6 +23,7 @@
   h1{margin:3px 0 0;font-family:"Hiragino Maru Gothic ProN","Yu Gothic",sans-serif;font-size:27px;letter-spacing:.06em;line-height:1.1}
   h1 span{color:var(--orange);font-size:.86em;margin-left:3px}.theme{font-size:12px;margin-top:4px;font-weight:600;color:var(--muted)}
   .saiji-link{display:flex;align-items:center;justify-content:center;gap:10px;width:calc(100% - 32px);margin:18px auto calc(24px + env(safe-area-inset-bottom));padding:15px 18px;border:3px solid var(--ink);border-radius:7px;background:#443088;box-shadow:4px 4px 0 var(--ink);color:#fff;text-decoration:none;font-size:17px;font-weight:800;letter-spacing:.06em}.saiji-link:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}.saiji-link .arrow{font-size:22px;line-height:0}
+  .line-add{display:flex;align-items:center;justify-content:center;gap:15px;width:calc(100% - 32px);max-width:410px;min-height:78px;margin:24px auto 0;padding:12px 20px;border:0;border-radius:999px;background:#2bc84f;box-shadow:0 5px 12px rgba(24,52,77,.2);color:#fff;text-decoration:none;font-family:inherit;font-size:clamp(17px,4.5vw,22px);font-weight:800;letter-spacing:.02em;cursor:pointer}.line-add:hover:not(:disabled){background:#20b944}.line-add:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px 6px rgba(24,52,77,.2)}.line-add:focus-visible{outline:3px solid #306486;outline-offset:4px}.line-add:disabled{cursor:not-allowed}.line-pending{margin:9px 16px 28px;text-align:center;color:var(--muted);font-size:12px}.line-mark{position:relative;display:grid;place-items:center;flex:none;width:54px;height:54px;border-radius:50%;background:#08b940}.line-mark::before{content:"";position:absolute;width:35px;height:32px;border-radius:50%;background:#fff}.line-mark::after{content:"";position:absolute;left:16px;bottom:9px;border:6px solid transparent;border-top-color:#fff;transform:rotate(25deg)}.line-mark span{position:relative;z-index:1;color:#08b940;font:800 10px/1 Arial,sans-serif}
   .admin-entry{display:block;width:max-content;max-width:calc(100% - 32px);margin:40px auto 24px;color:var(--muted);font-size:12px;text-decoration:underline;text-underline-offset:3px}.admin-entry:hover{color:var(--ink)}.admin-entry:focus-visible{outline:3px solid #306486;outline-offset:3px}
   .intro{padding:11px 18px 8px;font-size:12px;text-align:center;color:var(--muted)}
   .building{margin:0 15px 16px;border:3px solid var(--ink);border-radius:6px;background:rgba(255,255,255,.85);box-shadow:3px 4px 0 rgba(24,52,77,.13)}
@@ -54,6 +55,8 @@
   <a class="saiji-link" href="saiji.html">催事一覧を見る <span class="arrow" aria-hidden="true">→</span></a>
   <a class="saiji-link" href="taiikukan.html">体育館での特別催事 <span class="arrow" aria-hidden="true">→</span></a>
   <a class="saiji-link" href="map.html">校内マップ <span class="arrow" aria-hidden="true">→</span></a>
+  <button class="line-add" type="button" disabled aria-describedby="linePending"><span class="line-mark" aria-hidden="true"><span>LINE</span></span><span>宇工祭予約システム</span></button>
+  <p id="linePending" class="line-pending">公式LINEのリンクは準備中です</p>
   <hr>
   <h2>●お願い●</h2>
     <p>・会期中は､本校生徒のｽﾏﾎ等の利用を記録写真撮影のみ許可しています｡本校生徒との電話･SNS等での連絡のやり取りはご遠慮ください｡</p>
