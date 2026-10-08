@@ -10,6 +10,7 @@
 <title>宇工祭2026 デジタルパンフレット</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="announcement.css">
 <style>
   :root{--ink:#18344d;--blue:#306486;--orange:#e8793b;--cream:#fffdf8;--paper:#f4ecd9;--line:#d7c7aa;--muted:#617384}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -46,6 +47,7 @@
     <img class="mascot" src="uk-lion.png" alt="UKライオン">
     <div class="school">宇都宮工業高等学校</div><h1>宇工祭<span>2026</span></h1><div class="theme">〜 唯一無二の瞬間を 〜</div>
   </header>
+  <aside class="announcement-bar" aria-label="お知らせ" hidden><span class="announcement-label">お知らせ</span><div class="announcement-window"><span class="announcement-text"></span></div></aside>
 
   <img src="poster.jpg" style="max-width: 100%; height: auto;" alt="宇工祭ポスター">
   <a class="saiji-link" href="aisatsu.html">ごあいさつ <span class="arrow" aria-hidden="true">→</span></a>
@@ -65,4 +67,5 @@
 <script>
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 </script>
+<script type="module" src="announcement.js"></script>
 </body></html>
