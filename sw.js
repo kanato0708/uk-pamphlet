@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ukousai2026-v18-live-events';
+const CACHE_NAME = 'ukousai2026-v20-crowd-none';
 const ASSETS = [
   './',
   './index.html',
@@ -19,7 +19,8 @@ const ASSETS = [
   './manifest.json',
   './events.json',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './apple-touch-icon.png'
 ];
 
 self.addEventListener('install', (e) => {
