@@ -4,10 +4,12 @@ export const STATUS = Object.freeze({
   moderate: "やや混雑",
   busy: "混雑",
   closed: "受付停止・終了",
+  none: "なし",
 });
 export const STALE_MS = 15 * 60 * 1000;
 export function crowdState(record, connected, now = Date.now()) {
   const code = record && Object.hasOwn(STATUS, record.status) ? record.status : "unknown";
+  if (code === "none") return {tone: "unknown", compact: "情報なし", text: "情報なし"};
   const time = record?.updatedAt?.toMillis?.() || 0;
   const known = code !== "unknown" && time > 0;
   const stale = known && now - time >= STALE_MS;
