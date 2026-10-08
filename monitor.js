@@ -1,4 +1,5 @@
 import {crowdState, flattenEvents} from "./crowd-model.js";
+import {loadEventsData, watchEventsVersion} from "./event-data.js";
 
 const groups = document.getElementById("groups");
 const connection = document.getElementById("connection");
@@ -27,17 +28,31 @@ function render() {
       const tile = document.createElement("article"); tile.className = "tile";
       const room = document.createElement("div"); room.className = "tile-room"; room.textContent = ["3f", "2f", "1f"].includes(zone) ? (event.room || "").replace(/教室$/, "") : (event.room || event.zoneLabel);
       const name = document.createElement("div"); name.className = "tile-name"; name.textContent = event.name;
+      const record = records.get(event.id);
+      if (record?.status === "none") {
+        tile.dataset.status = "none";
+        tile.dataset.tone = "unknown";
+        const badge = document.createElement("span");
+        badge.className = "crowd-badge";
+        badge.dataset.tone = "unknown";
+        badge.textContent = "情報なし";
+        tile.title = `${event.room || event.zoneLabel}：情報なし`;
+        tile.setAttribute("aria-label", `${event.room || event.zoneLabel}：情報なし`);
+        tile.append(room, badge);
+        tiles.append(tile);
+        continue;
+      }
       const badge = document.createElement("span"); badge.className = "crowd-badge";
-      const record = records.get(event.id); const state = crowdState(record, connected); const shortStatus = mapStatus(record, connected); const tone = connected && ["quiet", "moderate", "busy", "closed"].includes(record?.status) ? record.status : state.tone; tile.dataset.tone = tone; badge.dataset.tone = tone; badge.textContent = shortStatus; tile.title = `${event.room || event.name}：${shortStatus}`; tile.setAttribute("aria-label", `${event.room || event.name} ${event.name}：${shortStatus}`);
+      const state = crowdState(record, connected); const shortStatus = mapStatus(record, connected); const tone = connected && ["quiet", "moderate", "busy", "closed"].includes(record?.status) ? record.status : state.tone; tile.dataset.tone = tone; badge.dataset.tone = tone; badge.textContent = shortStatus; tile.title = `${event.room || event.name}：${shortStatus}`; tile.setAttribute("aria-label", `${event.room || event.name} ${event.name}：${shortStatus}`);
       tile.append(room, name, badge); tiles.append(tile);
     }
     section.append(heading, tiles); groups.append(section);
   }
 }
 async function loadEvents() {
-  const response = await fetch(`events.json?updated=${Date.now()}`, {cache:"no-store"});
-  if (!response.ok) throw new Error("催事データを読み込めません。");
-  events = flattenEvents(await response.json()); render();
+  const {data, revision} = await loadEventsData();
+  events = flattenEvents(data); render();
+  return revision;
 }
 async function toggleFullscreen() { try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); } catch {} }
 fullscreen.addEventListener("click", toggleFullscreen);
@@ -47,7 +62,8 @@ window.addEventListener("offline", render);
 window.addEventListener("online", () => {serverFresh = false; render();});
 setInterval(render, 30000);
 try {
-  await loadEvents();
+  const revision = await loadEvents();
+  watchEventsVersion(() => loadEvents().catch(() => {failed = true; render();}), revision);
   const {watchCrowd} = await import("./crowd-firebase.js");
   watchCrowd((next, fresh) => {records = next; serverFresh = fresh; failed = false; render();}, () => {failed = true; serverFresh = false; render();});
 } catch { failed = true; connection.textContent = "表示を準備できません。通信とファイルの配置を確認してください。"; }
