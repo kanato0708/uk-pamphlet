@@ -1,0 +1,7 @@
+.announcement-bar[hidden]{display:none!important}
+.announcement-bar{display:flex;align-items:center;min-height:44px;overflow:hidden;border-bottom:2px solid #18344d;background:#443088;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+.announcement-label{z-index:1;flex:none;align-self:stretch;display:flex;align-items:center;padding:0 10px;background:#e8793b;color:#18344d;font-size:12px;font-weight:800;letter-spacing:.04em}
+.announcement-window{flex:1;min-width:0;overflow:hidden}
+.announcement-text{display:block;width:max-content;max-width:none;padding-left:100%;white-space:nowrap;font-size:14px;font-weight:700;line-height:1.5;animation:announcement-scroll var(--announcement-duration, 16s) linear infinite}
+@keyframes announcement-scroll{to{transform:translateX(-100%)}}
+@media(prefers-reduced-motion:reduce){.announcement-window{overflow-x:auto}.announcement-text{width:auto;padding:8px 12px;white-space:normal;animation:none}}
