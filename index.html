@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#18344d">
+<meta name="theme-color" content="#fffdf8">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="宇工祭2026">
 <title>宇工祭2026 デジタルパンフレット</title>
 <link rel="manifest" href="manifest.json">
@@ -35,6 +35,7 @@
   .story-menu h2{margin:0 0 5px;text-align:center;font-size:23px}.story-menu .menu-lead{margin:0 0 20px;text-align:center;color:var(--muted);font-size:13px}
   .story-menu .menu-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.story-menu .saiji-link{width:100%;min-height:86px;margin:0;padding:13px 10px;font-size:clamp(14px,3.7vw,17px);line-height:1.35;text-align:center;box-shadow:3px 3px 0 var(--ink)}.story-menu .saiji-link .arrow{font-size:18px}.story-menu .saiji-link:focus-visible{outline:3px solid #306486;outline-offset:4px}
   .reveal-ready .story-menu .saiji-link{opacity:0;transform:translateY(28px);transition:opacity .5s ease,transform .5s ease}.reveal-ready .story-menu.is-visible .saiji-link{opacity:1;transform:translateY(0)}.reveal-ready .story-menu.is-visible .saiji-link:nth-child(2){transition-delay:.08s}.reveal-ready .story-menu.is-visible .saiji-link:nth-child(3){transition-delay:.16s}.reveal-ready .story-menu.is-visible .saiji-link:nth-child(4){transition-delay:.24s}
+  @media(max-width:700px){.poster-story,.poster-stage{background:var(--cream)}.poster-stage{display:block;height:auto;min-height:0}.story-poster{width:100%;height:auto;object-fit:initial}.story-menu{margin-top:0}}
   @media(max-width:360px){.story-menu .menu-links{gap:9px}.story-menu .saiji-link{min-height:78px;padding:10px 7px;font-size:13px}}
   @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.story-poster{transform:none!important}.scroll-guide,.scroll-guide span{animation:none;transition:none}.reveal-ready .story-menu .saiji-link{opacity:1;transform:none;transition:none}}
   .admin-entry{display:block;width:max-content;max-width:calc(100% - 32px);margin:40px auto 24px;color:var(--muted);font-size:12px;text-decoration:underline;text-underline-offset:3px}.admin-entry:hover{color:var(--ink)}.admin-entry:focus-visible{outline:3px solid #306486;outline-offset:3px}
