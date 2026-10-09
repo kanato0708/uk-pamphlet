@@ -24,6 +24,19 @@
   h1 span{color:var(--orange);font-size:.86em;margin-left:3px}.theme{font-size:12px;margin-top:4px;font-weight:600;color:var(--muted)}
   .saiji-link{display:flex;align-items:center;justify-content:center;gap:10px;width:calc(100% - 32px);margin:18px auto calc(24px + env(safe-area-inset-bottom));padding:15px 18px;border:3px solid var(--ink);border-radius:7px;background:#443088;box-shadow:4px 4px 0 var(--ink);color:#fff;text-decoration:none;font-size:17px;font-weight:800;letter-spacing:.06em}.saiji-link:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}.saiji-link .arrow{font-size:22px;line-height:0}
   .line-entry{text-align:center;margin:24px 16px 28px}.line-entry p{margin:0 0 10px;font-size:16px;font-weight:800}.line-entry img{max-width:100%;height:36px}.line-entry a:focus-visible{outline:3px solid #306486;outline-offset:4px}
+  html{scroll-behavior:smooth}
+  .poster-story{position:relative;background:var(--ink)}
+  .poster-stage{position:sticky;top:0;height:100svh;min-height:520px;overflow:hidden;display:grid;place-items:center;background:#17263a}
+  .poster-stage::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,25,40,.12),rgba(10,25,40,.08) 55%,rgba(10,25,40,.58));pointer-events:none}
+  .story-poster{display:block;width:100%;height:100%;object-fit:contain;transform:scale(var(--poster-scale,1));transform-origin:center center;will-change:transform}
+  .scroll-guide{position:fixed;z-index:20;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:space-between;gap:12px;width:calc(100% - 24px);max-width:450px;min-height:78px;padding:12px 13px 12px 23px;border:3px solid rgba(255,255,255,.85);border-radius:999px;background:rgba(24,52,77,.94);color:#fff;text-decoration:none;font-size:clamp(17px,4.5vw,20px);font-weight:900;box-shadow:0 6px 0 #102639,0 12px 26px #0008;transition:opacity .25s ease,visibility .25s ease,transform .25s ease}.scroll-guide span{display:grid;place-items:center;flex:none;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:29px;line-height:1;animation:guide-bounce 1.4s ease-in-out infinite}.scroll-guide:hover{background:#24465f}.scroll-guide.is-hidden{opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,14px)}.scroll-guide:focus-visible{outline:3px solid #fff;outline-offset:4px}@keyframes guide-bounce{50%{transform:translateY(4px)}}
+  .story-menu{position:relative;z-index:3;margin-top:18svh;padding:28px 16px 30px;border-radius:24px 24px 0 0;background:var(--cream);box-shadow:0 -16px 40px #0a192855}
+  .story-menu::before{content:"";display:block;width:42px;height:5px;margin:-12px auto 22px;border-radius:10px;background:#b7a7c8}
+  .story-menu h2{margin:0 0 5px;text-align:center;font-size:23px}.story-menu .menu-lead{margin:0 0 20px;text-align:center;color:var(--muted);font-size:13px}
+  .story-menu .menu-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.story-menu .saiji-link{width:100%;min-height:86px;margin:0;padding:13px 10px;font-size:clamp(14px,3.7vw,17px);line-height:1.35;text-align:center;box-shadow:3px 3px 0 var(--ink)}.story-menu .saiji-link .arrow{font-size:18px}.story-menu .saiji-link:focus-visible{outline:3px solid #306486;outline-offset:4px}
+  .reveal-ready .story-menu .saiji-link{opacity:0;transform:translateY(28px);transition:opacity .5s ease,transform .5s ease}.reveal-ready .story-menu.is-visible .saiji-link{opacity:1;transform:translateY(0)}.reveal-ready .story-menu.is-visible .saiji-link:nth-child(2){transition-delay:.08s}.reveal-ready .story-menu.is-visible .saiji-link:nth-child(3){transition-delay:.16s}.reveal-ready .story-menu.is-visible .saiji-link:nth-child(4){transition-delay:.24s}
+  @media(max-width:360px){.story-menu .menu-links{gap:9px}.story-menu .saiji-link{min-height:78px;padding:10px 7px;font-size:13px}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.story-poster{transform:none!important}.scroll-guide,.scroll-guide span{animation:none;transition:none}.reveal-ready .story-menu .saiji-link{opacity:1;transform:none;transition:none}}
   .admin-entry{display:block;width:max-content;max-width:calc(100% - 32px);margin:40px auto 24px;color:var(--muted);font-size:12px;text-decoration:underline;text-underline-offset:3px}.admin-entry:hover{color:var(--ink)}.admin-entry:focus-visible{outline:3px solid #306486;outline-offset:3px}
   .intro{padding:11px 18px 8px;font-size:12px;text-align:center;color:var(--muted)}
   .building{margin:0 15px 16px;border:3px solid var(--ink);border-radius:6px;background:rgba(255,255,255,.85);box-shadow:3px 4px 0 rgba(24,52,77,.13)}
@@ -50,11 +63,22 @@
   </header>
   <aside class="announcement-bar" aria-label="お知らせ" hidden><span class="announcement-label">お知らせ</span><div class="announcement-window"><span class="announcement-text"></span></div></aside>
 
-  <img src="poster.jpg" style="max-width: 100%; height: auto;" alt="宇工祭ポスター">
-  <a class="saiji-link" href="aisatsu.html">ごあいさつ <span class="arrow" aria-hidden="true">→</span></a>
-  <a class="saiji-link" href="saiji.html">催事一覧を見る <span class="arrow" aria-hidden="true">→</span></a>
-  <a class="saiji-link" href="taiikukan.html">体育館での特別催事 <span class="arrow" aria-hidden="true">→</span></a>
-  <a class="saiji-link" href="map.html">校内マップ <span class="arrow" aria-hidden="true">→</span></a>
+  <section class="poster-story" aria-label="宇工祭ポスターとメニュー">
+    <div class="poster-stage" id="posterStage">
+      <img class="story-poster" id="storyPoster" src="poster.jpg" alt="宇工祭ポスター">
+    </div>
+    <a class="scroll-guide" href="#previewMenu">スクロールしてメニューを見る <span aria-hidden="true">↓</span></a>
+    <nav class="story-menu" id="previewMenu" aria-label="パンフレットのメニュー">
+      <h2>宇工祭デジタルパンフレット2026</h2>
+      <p class="menu-lead">見たい項目を選んでください</p>
+      <div class="menu-links">
+        <a class="saiji-link" href="aisatsu.html">ごあいさつ <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="saiji-link" href="saiji.html">催事一覧を見る <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="saiji-link" href="taiikukan.html">体育館での特別催事 <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="saiji-link" href="map.html">校内マップ <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+    </nav>
+  </section>
   <div class="line-entry"><p>宇工祭予約システムがLINEで稼働中！</p><a href="https://lin.ee/yJt1y0C"><img src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png" alt="友だち追加" height="36" border="0"></a></div>
   <hr>
   <h2>●お願い●</h2>
@@ -67,6 +91,36 @@
   <a class="admin-entry" href="admin.html">生徒会役員の方はこちら</a>
 </main>
 <script>
+(() => {
+  const story = document.querySelector('.poster-story');
+  const menu = document.getElementById('previewMenu');
+  const poster = document.getElementById('storyPoster');
+  const guide = document.querySelector('.scroll-guide');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('reveal-ready');
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) { menu.classList.add('is-visible'); observer.disconnect(); }
+    }, {threshold: .05});
+    observer.observe(menu);
+  }
+  let scheduled = false;
+  function updatePoster() {
+    scheduled = false;
+    const bounds = story.getBoundingClientRect();
+    guide.classList.toggle('is-hidden', menu.getBoundingClientRect().top < innerHeight * .82 || bounds.bottom <= 0);
+    if (reducedMotion.matches) { poster.style.removeProperty('--poster-scale'); return; }
+    const progress = Math.max(0, Math.min(1, -bounds.top / Math.max(1, innerHeight * .8)));
+    poster.style.setProperty('--poster-scale', (1 + progress * .055).toFixed(3));
+  }
+  function scheduleUpdate() {
+    if (!scheduled) { scheduled = true; requestAnimationFrame(updatePoster); }
+  }
+  addEventListener('scroll', scheduleUpdate, {passive:true});
+  addEventListener('resize', scheduleUpdate);
+  reducedMotion.addEventListener('change', scheduleUpdate);
+  scheduleUpdate();
+})();
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 </script>
 <script type="module" src="announcement.js"></script>
