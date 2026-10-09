@@ -57,7 +57,7 @@
   </header>
   <aside class="announcement-bar" aria-label="お知らせ" hidden><span class="announcement-label">お知らせ</span><div class="announcement-window"><span class="announcement-text"></span></div></aside>
   <h2 class="page-title">校内マップ</h2>
-  <p class="intro">地図を動かして番号や体育館名をタップすると、今年の催事情報を確認できます。二本指でも拡大・縮小できます。</p>
+  <p class="intro">地図を動かして教室番号や体育館名をタップすると、今年の催事情報を確認できます。二本指でも拡大・縮小できます。</p>
   <p id="mapStatus" class="status" role="status">催事情報を読み込んでいます…</p>
   <nav class="jump-nav" aria-label="地図のエリアへ移動">
     <button type="button" data-jump="20">3階</button>
@@ -76,7 +76,7 @@
   </div>
   <div class="map-viewport" id="mapViewport" aria-label="スクロールと拡大・縮小ができる校内マップ">
     <div class="map-wrap" id="mapWrap">
-      <img class="map-image" src="map.png" alt="校内マップ。上半分に校舎と体育館、下半分に中庭を示しています。番号をタップして催事を確認できます。">
+      <img class="map-image" src="map.png" alt="校内マップ。上半分に校舎と体育館、下半分に中庭を示しています。教室番号などをタップして催事を確認できます。">
     </div>
   </div>
   <a class="cover-link" href="index.html">← 表紙に戻る</a>
@@ -198,20 +198,25 @@
       const keys = [...Array.from({length: 39}, (_, index) => String(index + 1)), 'gymB', 'gymA'];
       for (const key of keys) {
         const position = positions[key];
+        const markerNumber = Number(key);
+        const isClassroom = Number.isInteger(markerNumber) && markerNumber >= 1 && markerNumber <= 24;
+        const floor = isClassroom ? Math.floor((markerNumber - 1) / 8) + 1 : null;
+        const roomIndex = isClassroom ? ((markerNumber - 1) % 8) + 1 : null;
+        const roomName = isClassroom ? `${floor}${String(roomIndex).padStart(2, '0')}教室` : null;
         const eventIds = links[key];
         if (!position || !Array.isArray(eventIds)) throw new Error(`地図番号${key}の対応データを確認してください`);
         const pin = document.createElement('button');
         pin.type = 'button';
         pin.className = `map-pin ${/^\d+$/.test(key) ? 'number' : 'venue'}`;
-        pin.textContent = position.label || key;
-        pin.setAttribute('aria-label', position.label ? `${position.label}の催事を見る` : `${key}番の催事を見る`);
+        pin.textContent = roomName ? roomName.replace('教室', '') : position.label || key;
+        pin.setAttribute('aria-label', roomName ? `${roomName}の催事を見る` : position.label ? `${position.label}の催事を見る` : `${key}番の催事を見る`);
         pin.style.left = `${position.x}%`;
         pin.style.top = `${position.y}%`;
         pin.addEventListener('click', () => {
           if (activePin) activePin.classList.remove('active');
           activePin = pin;
           pin.classList.add('active');
-          sheetTitle.textContent = position.label || `地図番号 ${key}`;
+          sheetTitle.textContent = roomName || position.label || `地図番号 ${key}`;
           sheetEvents.replaceChildren();
           for (const id of eventIds) {
             const item = eventById.get(id);
@@ -264,8 +269,8 @@
       await document.querySelector('.map-image').decode().catch(() => {});
       jumpTo('12', 'auto');
       mapStatus.textContent = usingFallback
-        ? '予備データを表示しています。1〜39番と体育館名をタップできます。'
-        : '1〜39番と体育館名をタップして詳細を見られます。';
+        ? '予備データを表示しています。教室番号・地図番号・体育館名をタップできます。'
+        : '教室番号・地図番号・体育館名をタップして詳細を見られます。';
       return revision;
     } catch (error) {
       mapStatus.textContent = '地図の催事情報を読み込めませんでした。通信を確認して再読み込みしてください。';
