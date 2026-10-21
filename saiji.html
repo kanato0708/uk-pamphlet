@@ -875,7 +875,7 @@
         position?.setAttribute("aria-pressed", "true");
         const data = EVENTS[zone],
           item = data.items[index];
-        show(data.label + " " + item.name, data.building, item);
+        show(item.name, data.building, item);
         detail.scrollTop = 0;
       }
       function selectZone(zone, button) {
