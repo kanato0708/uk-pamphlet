@@ -14,6 +14,7 @@
     .toolbar{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:16px}button,.import-label,.photo-label{appearance:none;display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 13px;border:2px solid var(--ink);border-radius:5px;background:var(--cream);color:var(--ink);box-shadow:2px 2px 0 var(--ink);font:700 13px/1.3 inherit;cursor:pointer}.primary{background:var(--orange);color:#fff}.import-label input,.photo-label input{position:absolute;width:1px;height:1px;opacity:0}.import-label:focus-within,.photo-label:focus-within,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #397cad;outline-offset:2px}button:disabled{opacity:.55;cursor:wait}
     .status{margin:0 0 14px;color:var(--muted);font-size:13px;min-height:1.5em}.status.error{color:#9e332d}.zone{margin:0 0 18px;border:3px solid var(--ink);border-radius:7px;background:rgba(255,255,255,.84);overflow:hidden}.zone-head{padding:11px 13px;border-bottom:2px solid var(--ink);background:var(--cream)}.zone-head h2{margin:0;font-size:17px}.zone-head small{color:var(--muted);font-weight:600}
     .events{padding:10px;display:grid;gap:10px}.event{padding:12px;border:2px solid var(--line);border-radius:5px;background:#fff}.event-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.event-number{font-size:13px;font-weight:800}.delete{min-height:34px;padding:5px 8px;border-color:#a33e35;color:#a33e35;box-shadow:none;font-size:12px}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}label.field{display:grid;gap:4px;color:var(--muted);font-size:12px;font-weight:700}.wide{grid-column:1/-1}input:not([type=file]),textarea,select{width:100%;border:1.5px solid var(--ink);border-radius:4px;padding:9px;background:#fffdf8;color:var(--ink);font:14px inherit}textarea{min-height:82px;resize:vertical}.photo-panel{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.photo-preview{display:none;width:170px;max-width:100%;aspect-ratio:16/9;object-fit:cover;border:1px solid var(--line);border-radius:4px}.photo-preview.has-image{display:block}.photo-actions{display:flex;flex-wrap:wrap;gap:8px}.photo-actions button{box-shadow:none}.photo-help{display:block;font-weight:400;font-size:12px}.add{margin:0 10px 12px;min-height:38px;box-shadow:none;font-size:13px}@media(max-width:480px){main{padding-inline:12px}.fields{grid-template-columns:1fr}}
+    .backup{margin-top:28px;padding:16px;border:2px solid var(--line);border-radius:6px;background:var(--cream)}.backup h2{margin:0 0 6px;font-size:18px}.backup p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.6}.backup-buttons{display:flex;flex-wrap:wrap;gap:9px}
   </style>
 </head>
 <body>
@@ -29,11 +30,20 @@
     </div>
     <p id="status" class="status" role="status" aria-live="polite">催事データを読み込んでいます…</p>
     <div id="zones"></div>
+    <section class="backup" aria-labelledby="backupTitle">
+      <h2 id="backupTitle">予備データをダウンロード</h2>
+      <p>現在この画面に表示されている催事データを保存します。編集途中の内容も含まれます。公開後にダウンロードし、2つのファイルを作業フォルダの同名ファイルと置き換えてください。</p>
+      <div class="backup-buttons">
+        <button id="downloadEvents" type="button" disabled>events.json をダウンロード</button>
+        <button id="downloadMapData" type="button" disabled>map-local-data.js をダウンロード</button>
+      </div>
+    </section>
   </main>
   <script>
-    const order=["3f","2f","1f","gymA","gymB","admin","courtyard"];
+    const order=["3f","2f","1f","gymA","gymB","courtyard","admin"];
     const names={"3f":"校舎 3階","2f":"校舎 2階","1f":"校舎 1階",gymA:"第1体育館",gymB:"第2体育館",admin:"管理棟",courtyard:"中庭"};
     const zones=document.getElementById("zones"),status=document.getElementById("status"),publish=document.getElementById("publish");
+    const downloadEvents=document.getElementById("downloadEvents"),downloadMapData=document.getElementById("downloadMapData");
     let data={},baseline={},currentRevision=null,dirty=false,pendingImages=0,loadEventsData,saveEventsData;
     const safe=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
     function setStatus(message,error=false){status.textContent=message;status.classList.toggle("error",error)}
@@ -109,7 +119,10 @@
       });
       return result;
     }
-    function acceptData(value,message,revision){if(!validData(value))throw new Error("催事データの形式が正しくありません。");data=value;baseline=JSON.parse(JSON.stringify(value));currentRevision=revision;render();dirty=false;setStatus(message)}
+    function acceptData(value,message,revision){if(!validData(value))throw new Error("催事データの形式が正しくありません。");data=value;baseline=JSON.parse(JSON.stringify(value));currentRevision=revision;render();dirty=false;downloadEvents.disabled=false;downloadMapData.disabled=false;setStatus(message)}
+    function downloadFile(name,content,type){const url=URL.createObjectURL(new Blob([content],{type}));const link=document.createElement("a");link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+    downloadEvents.addEventListener("click",()=>{try{downloadFile("events.json",JSON.stringify(updated(),null,2)+"\n","application/json")}catch(error){setStatus(error.message||"予備データを作成できませんでした。",true)}});
+    downloadMapData.addEventListener("click",async()=>{downloadMapData.disabled=true;try{const [linksResponse,positionsResponse]=await Promise.all([fetch("map-links.json",{cache:"no-store"}),fetch("map-positions.json",{cache:"no-store"})]);if(!linksResponse.ok||!positionsResponse.ok)throw new Error("地図データを読み込めませんでした。");const [links,positions]=await Promise.all([linksResponse.json(),positionsResponse.json()]);const backup={events:updated(),links,positions};downloadFile("map-local-data.js","// 公開中の催事と地図から保存した予備データ。\nwindow.MAP_LOCAL_DATA = "+JSON.stringify(backup)+";\n","text/javascript")}catch(error){setStatus(error.message||"地図の予備データを作成できませんでした。",true)}finally{downloadMapData.disabled=false}});
     async function load(){
       if(dirty&&!confirm("未保存の変更を破棄して、公開中のデータを読み込みますか？"))return;
       setStatus("公開中の催事データを読み込んでいます…");
