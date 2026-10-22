@@ -39,7 +39,7 @@
     .map-image{display:block;width:100%;height:auto}
     .map-pin{position:absolute;z-index:1;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;width:clamp(66px,14%,104px);min-height:44px;padding:5px 4px;border:2px solid var(--ink);border-radius:8px;background:#443088;color:#fff;box-shadow:2px 3px 0 var(--ink);font-family:inherit;font-size:clamp(10px,1.8vw,13px);font-weight:800;line-height:1.2;text-align:center;cursor:pointer}
     .map-pin:active{transform:translate(-50%,-50%) scale(.96)}
-    .map-pin.number{width:3.4%;min-height:0;aspect-ratio:1;padding:0;border-radius:2px;background:#fffdf8;color:#443088;font-size:14px;box-shadow:none}
+    .map-pin.number{width:3.5%;min-height:0;aspect-ratio:1;padding:0;border-radius:2px;background:#fffdf8;color:#443088;font-size:14px;box-shadow:none}
     .map-pin.number.active,.map-pin.venue.active{background:var(--orange);color:#fff}
     .map-pin:focus-visible,.sheet-close:focus-visible,a:focus-visible{outline:3px solid #306486;outline-offset:3px}
     .cover-link{display:flex;align-items:center;justify-content:center;min-height:48px;margin:18px 16px calc(24px + env(safe-area-inset-bottom));padding:10px 16px;border:3px solid var(--ink);border-radius:7px;background:var(--cream);box-shadow:4px 4px 0 var(--ink);color:var(--ink);font-weight:800;text-decoration:none}
@@ -209,7 +209,7 @@
         const pin = document.createElement('button');
         pin.type = 'button';
         pin.className = `map-pin ${/^\d+$/.test(key) ? 'number' : 'venue'}`;
-        pin.textContent = roomName ? roomName.replace('教室', '') : position.label || key;
+        pin.textContent = /^\d+$/.test(key) ? key : position.label || key;
         pin.setAttribute('aria-label', roomName ? `${roomName}の催事を見る` : position.label ? `${position.label}の催事を見る` : `${key}番の催事を見る`);
         pin.style.left = `${position.x}%`;
         pin.style.top = `${position.y}%`;
