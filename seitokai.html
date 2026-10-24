@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#18344d">
+  <title>生徒会運営資料｜宇工祭</title>
+  <style>
+    :root{--ink:#18344d;--purple:#443088;--paper:#f4ecd9;--muted:#526577}
+    *{box-sizing:border-box}
+    [hidden]{display:none!important}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;line-height:1.7}
+    main{width:min(100%,850px);min-height:100dvh;margin:auto;padding:32px 18px 54px;background:#fffdf8}
+    .eyebrow{margin:0 0 5px;color:var(--purple);font-size:13px;font-weight:800;letter-spacing:.08em}
+    h1{margin:0 0 8px;font-size:clamp(25px,5vw,34px)}
+    .lead{margin:0 0 24px;color:var(--muted)}
+    article{min-height:55vh;padding:22px;border:1px solid #d7c7aa;border-radius:10px;background:#fff;box-shadow:2px 3px 0 #d7c7aa}
+    article p{margin:0}
+    a{color:var(--purple);font-weight:700}
+    a:focus-visible{outline:3px solid #397cad;outline-offset:3px}
+    .back{display:inline-block;margin-top:24px}
+  </style>
+</head>
+<body>
+  <p id="authStatus" role="status" style="max-width:850px;margin:24px auto;padding:16px">管理者権限を確認しています…</p>
+  <main hidden>
+    <a href="admin.html">← 管理者トップに戻る</a>
+    <p class="eyebrow" style="margin-top:24px">宇工祭 · 生徒会役員用</p>
+    <h1>生徒会運営資料</h1>
+    <p class="lead">困ったときに確認する運営資料です。</p>
+    <article>
+      <p>ここに生徒会運営資料を記入してください。</p>
+    </article>
+  </main>
+  <script type="module">
+    import("./admin-access.js").then(({watchAdmin})=>watchAdmin({
+      checking:message=>{document.querySelector("main").hidden=true;const status=document.getElementById("authStatus");status.hidden=false;status.textContent=message||"管理者権限を確認しています…"},
+      authorized:()=>{document.getElementById("authStatus").hidden=true;document.querySelector("main").hidden=false},
+      unauthorized:()=>location.replace("admin.html?next=seitokai.html"),
+      signedOut:()=>location.replace("admin.html?next=seitokai.html"),
+      failed:()=>{document.getElementById("authStatus").textContent="管理者権限を確認できません。通信を確認して再読み込みしてください。"}
+    })).catch(()=>{document.getElementById("authStatus").textContent="管理者用ページを読み込めません。通信を確認して再読み込みしてください。"});
+  </script>
+</body>
+</html>
