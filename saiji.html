@@ -557,9 +557,9 @@
         <button class="facility" data-zone="gymA">第1体育館</button
         ><button class="facility" data-zone="gymB">第2体育館</button>
       </section>
-      <section class="building" aria-label="管理棟・中庭の催事一覧">
+      <section class="building" aria-label="中庭・その他催事の一覧">
         <div class="building-head">
-          <div><strong>管理棟・中庭</strong><span>　団体を選択</span></div>
+          <div><strong>中庭・その他催事</strong><span>　団体を選択</span></div>
         </div>
         <div id="activityZones"></div>
       </section>
@@ -675,8 +675,8 @@
           ],
         },
         admin: {
-          label: "管理棟",
-          building: "管理棟",
+          label: "その他催事",
+          building: "その他催事",
           items: [
             { name: "定時制生徒会" },
             { name: "科学技術研究部" },
@@ -835,8 +835,8 @@
       function renderActivityZones() {
         activityZones.replaceChildren();
         [
-          ["admin", "管理棟"],
           ["courtyard", "中庭"],
+          ["admin", "その他催事"],
         ].forEach(([id, label]) => {
           const data = EVENTS[id] || { items: [] },
             row = document.createElement("div");
