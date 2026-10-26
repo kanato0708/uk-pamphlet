@@ -875,7 +875,7 @@
         position?.setAttribute("aria-pressed", "true");
         const data = EVENTS[zone],
           item = data.items[index];
-        show(item.name, data.building, item);
+        show(item.name, ["1f", "2f", "3f"].includes(zone) ? "教室棟" : data.building, item);
         detail.scrollTop = 0;
       }
       function selectZone(zone, button) {
