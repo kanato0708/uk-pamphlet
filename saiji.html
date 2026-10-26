@@ -891,7 +891,7 @@
       }
       function show(title, tag, item, items, zone) {
         openDetail();
-        detailTitle.textContent = title;
+        detailTitle.textContent = item ? item.room : title;
         detailTag.textContent = tag;
         const list = items || (item ? [item] : []);
         detailMeta.textContent = list.length > 1 ? `${list.length}件` : "";
