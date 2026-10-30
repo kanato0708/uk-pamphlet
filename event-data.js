@@ -8,6 +8,15 @@ const eventCollection = collection(db, "publishedEvents");
 const idPattern = /^[A-Za-z0-9_-]{1,100}$/;
 const encoder = new TextEncoder();
 
+function newRevision() {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+  if (globalThis.crypto?.getRandomValues) {
+    const values = globalThis.crypto.getRandomValues(new Uint32Array(4));
+    return `${Date.now().toString(36)}-${Array.from(values, value => value.toString(36)).join("-")}`;
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+}
+
 function validate(data) {
   if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("催事データの形式が正しくありません。");
   const ids = new Set();
@@ -16,6 +25,13 @@ function validate(data) {
     for (const item of group.items) {
       if (!item.name || !idPattern.test(item.id || "") || ids.has(item.id)) throw new Error("催事名または催事IDを確認してください。");
       if (item.image && !/^data:image\/(?:jpeg|png|webp);base64,[a-z\d+/=]+$/i.test(item.image)) throw new Error("写真の形式を確認してください。");
+      if (item.mapNumber !== undefined && item.mapNumber !== null && item.mapNumber !== "") {
+        const mapNumber = typeof item.mapNumber === "string" && /^\d+$/.test(item.mapNumber)
+          ? Number(item.mapNumber) : item.mapNumber;
+        if (typeof mapNumber !== "number" || !Number.isInteger(mapNumber) || mapNumber < 1 || mapNumber > 44) {
+          throw new Error("地図番号は1〜44の整数で入力してください。");
+        }
+      }
       ids.add(item.id);
     }
   }
@@ -67,7 +83,7 @@ export async function saveEventsData(data, previous, expectedRevision) {
     const {items, ...metadata} = group;
     return [zone, {...metadata, itemIds: items.map(item => item.id)}];
   }));
-  const revision = crypto.randomUUID();
+  const revision = newRevision();
   const manifest = {groups, revision, updatedAt: new Date().toISOString()};
   const bytes = encoder.encode(JSON.stringify(manifest)).length + changed.reduce((total, item) => total + encoder.encode(JSON.stringify(item)).length, 0);
   if (changed.some(item => encoder.encode(JSON.stringify(item)).length > 900000)) throw new Error("写真が大きすぎます。小さい写真を選び直してください。");
