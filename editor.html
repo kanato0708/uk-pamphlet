@@ -58,6 +58,7 @@
           <label class="field">カテゴリ<select data-field="category"><option>飲食</option><option>遊ぶ・体験</option><option>展示・ステージ</option><option>団体・案内</option></select></label>
           <label class="field">場所<input data-field="room" value="${safe(item.room)}"></label>
           <label class="field">時間<input data-field="time" value="${safe(item.time)}" placeholder="例：10:00〜12:00"></label>
+          <label class="field">地図番号<input data-field="mapNumber" type="number" min="1" max="44" step="1" value="${safe(item.mapNumber)}" placeholder="未設定（1〜44）"></label>
           <label class="field wide">説明<textarea data-field="desc">${safe(item.desc)}</textarea></label>
           <div class="wide"><span class="field">写真</span><div class="photo-panel"><img class="photo-preview" alt="選択中の催事写真"><div class="photo-actions"><label class="photo-label">写真を選ぶ<input class="photo-input" type="file" accept="image/*"></label><button class="remove-photo" type="button">写真を削除</button></div></div><span class="photo-help">JPEG・PNG・WebPなどの画像を選べます。自動で縮小してデータに含めます。</span></div>
         </div>`;
@@ -115,7 +116,9 @@
       document.querySelectorAll(".zone").forEach(section=>{
         result[section.dataset.zone].items=[...section.querySelectorAll(".event")].map(card=>{
           const get=field=>card.querySelector(`[data-field="${field}"]`).value.trim();
+          const rawMapNumber=get("mapNumber");
           const item={...card._original,id:card.dataset.eventId,name:get("name"),category:get("category"),room:get("room"),time:get("time"),desc:get("desc")};
+          if(rawMapNumber){const mapNumber=Number(rawMapNumber);if(!Number.isInteger(mapNumber)||mapNumber<1||mapNumber>44)throw new Error("地図番号は1〜44の整数で入力してください。");item.mapNumber=mapNumber}else delete item.mapNumber;
           if(card._image)item.image=card._image;else delete item.image;
           return item;
         });
