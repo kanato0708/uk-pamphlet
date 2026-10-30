@@ -1,291 +1,98 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta name="robots" content="noindex">
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#18344d">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="宇工祭2026">
+  <meta name="robots" content="noindex">
   <title>校内マップ｜宇工祭2026</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="stylesheet" href="announcement.css">
   <link rel="icon" href="lion-favicon.ico" type="image/x-icon">
   <style>
-    :root{--ink:#18344d;--orange:#e8793b;--cream:#fffdf8;--paper:#f4ecd9;--muted:#617384}
-    *{box-sizing:border-box}
+    :root{--ink:#18344d;--blue:#306486;--orange:#e8793b;--paper:#f4ecd9;--cream:#fffdf8;--muted:#617384;--line:#d7c7aa}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     [hidden]{display:none!important}
     html,body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif}
-    #app{width:min(100%,680px);min-height:100dvh;margin:auto;background:var(--cream);border-inline:1px solid #d7c7aa}
+    #app{width:min(100%,760px);min-height:100dvh;margin:auto;background:var(--cream);border-inline:1px solid var(--line)}
     .banner{position:relative;text-align:center;padding:calc(18px + env(safe-area-inset-top)) 56px 15px;border-bottom:3px solid var(--ink)}
-    .mascot{position:absolute;left:16px;bottom:10px;height:48px;width:auto;object-fit:contain}
-    .school{font-size:11px;letter-spacing:.12em;font-weight:700;color:#306486}
-    h1{margin:3px 0 0;font-size:27px;line-height:1.1;letter-spacing:.06em}h1 span{color:var(--orange);font-size:.86em;margin-left:3px}
-    .theme{font-size:12px;margin-top:4px;font-weight:600;color:var(--muted)}
-    .page-title{margin:16px 16px 4px;font-size:22px}
-    .intro,.status{margin:0 16px 10px;font-size:13px;line-height:1.6;color:var(--muted)}
-    .status.error{color:#a33e35;font-weight:700}
-    .jump-nav{display:flex;gap:7px;overflow-x:auto;margin:0 16px 10px;padding:2px 0 8px}
-    .jump-nav button{flex:none;min-height:40px;padding:6px 10px;border:2px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
-    .jump-nav button:focus-visible{outline:3px solid #306486;outline-offset:2px}
-    .map-tools{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:0 16px 10px}
-    .map-tools button{min-width:44px;min-height:44px;padding:6px 10px;border:2px solid var(--ink);border-radius:7px;background:#fff;color:var(--ink);font-family:inherit;font-size:16px;font-weight:800;cursor:pointer}
-    .map-tools button:disabled{opacity:.4;cursor:default}
-    .map-tools button:focus-visible{outline:3px solid #306486;outline-offset:2px}
-    .map-tools output{min-width:48px;font-size:13px;font-weight:800;text-align:center}
-    .map-viewport{height:min(67dvh,620px);min-height:340px;overflow:auto;overscroll-behavior:contain;border-block:2px solid var(--ink);background:#fff;touch-action:pan-x pan-y}
-    .map-wrap{position:relative;width:max(100%,1400px);line-height:0}
-    .map-image{display:block;width:100%;height:auto}
-    .map-pin{position:absolute;z-index:1;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;width:clamp(66px,14%,104px);min-height:44px;padding:5px 4px;border:2px solid var(--ink);border-radius:8px;background:#443088;color:#fff;box-shadow:2px 3px 0 var(--ink);font-family:inherit;font-size:clamp(10px,1.8vw,13px);font-weight:800;line-height:1.2;text-align:center;cursor:pointer}
-    .map-pin:active{transform:translate(-50%,-50%) scale(.96)}
-    .map-pin.number{width:3.5%;min-height:0;aspect-ratio:1;padding:0;border-radius:2px;background:#fffdf8;color:#443088;font-size:14px;box-shadow:none}
-    .map-pin.number.active,.map-pin.venue.active{background:var(--orange);color:#fff}
-    .map-pin:focus-visible,.sheet-close:focus-visible,a:focus-visible{outline:3px solid #306486;outline-offset:3px}
-    .cover-link{display:flex;align-items:center;justify-content:center;min-height:48px;margin:18px 16px calc(24px + env(safe-area-inset-bottom));padding:10px 16px;border:3px solid var(--ink);border-radius:7px;background:var(--cream);box-shadow:4px 4px 0 var(--ink);color:var(--ink);font-weight:800;text-decoration:none}
-    .sheet{position:fixed;z-index:10;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,680px);max-height:65dvh;overflow:auto;padding:14px 16px calc(18px + env(safe-area-inset-bottom));border:3px solid var(--ink);border-bottom:0;border-radius:16px 16px 0 0;background:var(--cream);box-shadow:0 -6px 24px #18344d44}
-    .sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}.sheet-head h2{margin:0;font-size:20px}
-    .sheet-close{flex:none;min-width:44px;min-height:44px;border:2px solid var(--ink);border-radius:50%;background:#fff;color:var(--ink);font-size:22px;cursor:pointer}
-    .event{padding:12px 0;border-top:1px solid #d7c7aa}.event h3{margin:0 0 6px;font-size:17px}.event p{margin:4px 0;font-size:13px;line-height:1.5}.event .meta{color:var(--muted);font-weight:700}
-    .more-link{display:inline-block;margin-top:9px;color:#443088;font-weight:800}
+    .mascot{position:absolute;left:16px;bottom:10px;height:48px;width:auto;object-fit:contain}.school{font-size:11px;letter-spacing:.12em;font-weight:700;color:var(--blue)}
+    h1{margin:3px 0 0;font-size:27px;line-height:1.1;letter-spacing:.06em}h1 span{color:var(--orange);font-size:.86em;margin-left:3px}.theme{font-size:12px;margin-top:4px;font-weight:600;color:var(--muted)}
+    .intro{padding:16px 16px 8px}.intro h2{margin:0 0 5px;font-size:22px}.intro p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}
+    #mapStatus{margin:0 16px 10px;padding:9px 12px;border-radius:8px;background:#edf3f6;color:#355368;font-size:12px;line-height:1.5}#mapStatus.error{background:#fff0ed;color:#9b342c}
+    .jump-nav{display:flex;gap:7px;overflow-x:auto;margin:0 16px 9px;padding:2px 0 7px;scrollbar-width:thin}
+    .jump-nav button{flex:none;min-height:40px;padding:6px 11px;border:2px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink);font-family:inherit;font-size:13px;font-weight:800;cursor:pointer}
+    .map-tools{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin:0 16px 9px}.map-tools button{min-width:42px;min-height:42px;padding:5px 9px;border:2px solid var(--ink);border-radius:7px;background:#fff;color:var(--ink);font-family:inherit;font-size:16px;font-weight:800;cursor:pointer}.map-tools button:disabled{opacity:.45;cursor:default}.map-tools output{min-width:48px;text-align:center;font-size:12px;font-weight:800}
+    button:focus-visible,a:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+    .map-viewport{height:min(66dvh,700px);min-height:340px;overflow:auto;overscroll-behavior:contain;border-block:2px solid var(--ink);background:#fff;touch-action:pan-x pan-y}
+    .map-wrap{position:relative;width:1688px;line-height:0}.map-image{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+    .map-pin{position:absolute;z-index:1;left:var(--x);top:var(--y);transform:translate(-50%,-50%);width:2.25%;aspect-ratio:1;min-width:0;padding:0;border:2px solid #fff;border-radius:50%;background:transparent;color:transparent;box-shadow:0 0 0 1.5px #18344d99;cursor:pointer}
+    .map-pin.assigned{border-color:#fff;box-shadow:0 0 0 3px #443088,0 1px 5px #182c3b;background:#44308822}
+    .map-pin.active{border-color:#fff;box-shadow:0 0 0 4px var(--orange),0 1px 5px #182c3b}
+    .map-pin.tight{width:1.45%}.map-pin:active{transform:translate(-50%,-50%) scale(.9)}
+    .map-legend{display:flex;align-items:center;gap:7px;margin:10px 16px 16px;color:var(--muted);font-size:12px}.legend-dot{width:14px;height:14px;border:2px solid #fff;border-radius:50%;background:#443088;box-shadow:0 0 0 2px #443088;flex:none}
+    .cover-link{display:flex;align-items:center;justify-content:center;min-height:50px;margin:8px 16px calc(24px + env(safe-area-inset-bottom));padding:10px 16px;border:3px solid var(--ink);border-radius:8px;background:var(--cream);box-shadow:4px 4px 0 var(--ink);color:var(--ink);font-weight:800;text-decoration:none}
+    .sheet{position:fixed;z-index:10;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,760px);max-height:58dvh;overflow:auto;padding:13px 16px calc(16px + env(safe-area-inset-bottom));border:3px solid var(--ink);border-bottom:0;border-radius:16px 16px 0 0;background:var(--cream);box-shadow:0 -6px 24px #18344d44}
+    .sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}.sheet-head h2{margin:0;font-size:19px}.sheet-close{flex:none;width:44px;height:44px;border:2px solid var(--ink);border-radius:50%;background:#fff;color:var(--ink);font-size:22px;cursor:pointer}
+    .event{padding:11px 0;border-top:1px solid var(--line)}.event h3{margin:0 0 4px;font-size:16px}.event p{margin:4px 0;font-size:13px;line-height:1.55;white-space:pre-line}.meta{color:var(--muted);font-weight:700}.empty{margin:6px 0;padding:12px;border-radius:8px;background:#f0f3f4;color:#526577;font-size:13px;line-height:1.55}.more-link{display:inline-block;margin:8px 0;color:#443088;font-weight:800}
+    @media(max-width:520px){.intro{padding-inline:13px}#mapStatus{margin-inline:13px}.jump-nav,.map-tools{margin-inline:13px}.map-legend{margin-inline:13px}}
   </style>
 </head>
 <body>
 <main id="app">
-  <header class="banner">
-    <img class="mascot" src="uk-lion.png" alt="UKライオン">
-    <div class="school">宇都宮工業高等学校</div><h1>宇工祭<span>2026</span></h1><div class="theme">〜 唯一無二の瞬間を 〜</div>
-  </header>
+  <header class="banner"><img class="mascot" src="uk-lion.png" alt="UKライオン"><div class="school">宇都宮工業高等学校</div><h1>宇工祭<span>2026</span></h1><div class="theme">〜 唯一無二の瞬間を 〜</div></header>
   <aside class="announcement-bar" aria-label="お知らせ" hidden><span class="announcement-label">お知らせ</span><div class="announcement-window"><span class="announcement-text"></span></div></aside>
-  <h2 class="page-title">校内マップ</h2>
-  <p class="intro">地図を動かして教室番号や体育館名をタップすると、今年の催事情報を確認できます。二本指でも拡大・縮小できます。</p>
-  <p id="mapStatus" class="status" role="status">催事情報を読み込んでいます…</p>
+  <section class="intro"><h2>校内マップ</h2><p>番号を押すと、その場所に登録された催事を確認できます。地図はスクロールと拡大・縮小ができます。</p></section>
+  <p id="mapStatus" role="status">催事情報を読み込んでいます…</p>
   <nav class="jump-nav" aria-label="地図のエリアへ移動">
-    <button type="button" data-jump="20">3階</button>
-    <button type="button" data-jump="12">2階</button>
-    <button type="button" data-jump="4">1階</button>
-    <button type="button" data-jump="29">管理棟</button>
-    <button type="button" data-jump="30">中庭</button>
-    <button type="button" data-jump="gymB">第2体育館</button>
-    <button type="button" data-jump="gymA">第1体育館</button>
+    <button type="button" data-jump="floor3">3階</button><button type="button" data-jump="floor2">2階</button><button type="button" data-jump="floor1">1階</button><button type="button" data-jump="admin">管理棟</button><button type="button" data-jump="courtyard">中庭</button><button type="button" data-jump="gym">体育館</button>
   </nav>
-  <div class="map-tools" aria-label="地図の拡大・縮小">
-    <button id="zoomOut" type="button" aria-label="地図を縮小">−</button>
-    <output id="zoomLevel" aria-live="off">100%</output>
-    <button id="zoomIn" type="button" aria-label="地図を拡大">＋</button>
-    <button id="zoomFit" type="button">全体表示</button>
-  </div>
-  <div class="map-viewport" id="mapViewport" aria-label="スクロールと拡大・縮小ができる校内マップ">
-    <div class="map-wrap" id="mapWrap">
-      <img class="map-image" src="newmap.png" alt="校内マップ。上半分に校舎と体育館、下半分に中庭を示しています。教室番号などをタップして催事を確認できます。">
-    </div>
-  </div>
+  <div class="map-tools" aria-label="地図の拡大・縮小"><button id="zoomOut" type="button" aria-label="地図を縮小">−</button><output id="zoomLevel" aria-live="off">100%</output><button id="zoomIn" type="button" aria-label="地図を拡大">＋</button><button id="zoomFit" type="button">全体表示</button></div>
+  <div class="map-viewport" id="mapViewport" aria-label="番号を押して催事を選ぶ校内マップ"><div class="map-wrap" id="mapWrap"><img class="map-image" src="map-numbered.png" alt="宇工祭の校内図。1から44までの場所番号が付いています。番号を押すと催事を表示します。"></div></div>
+  <p class="map-legend"><span class="legend-dot" aria-hidden="true"></span>催事編集画面で地図番号が設定されている場所</p>
   <a class="cover-link" href="index.html">← 表紙に戻る</a>
 </main>
-<section id="detailSheet" class="sheet" role="region" aria-labelledby="sheetTitle" hidden>
-  <div class="sheet-head"><h2 id="sheetTitle"></h2><button id="sheetClose" class="sheet-close" type="button" aria-label="詳細を閉じる">×</button></div>
-  <div id="sheetEvents"></div>
-</section>
+<section id="detailSheet" class="sheet" role="region" aria-labelledby="sheetTitle" hidden><div class="sheet-head"><h2 id="sheetTitle"></h2><button id="sheetClose" class="sheet-close" type="button" aria-label="詳細を閉じる">×</button></div><div id="sheetEvents"></div></section>
 <script type="module" src="announcement.js"></script>
 <script src="map-local-data.js"></script>
+<script src="map-points.js"></script>
 <script>
-  const mapWrap = document.getElementById('mapWrap');
-  const mapViewport = document.getElementById('mapViewport');
-  const mapStatus = document.getElementById('mapStatus');
-  const sheet = document.getElementById('detailSheet');
-  const sheetTitle = document.getElementById('sheetTitle');
-  const sheetEvents = document.getElementById('sheetEvents');
-  const closeButton = document.getElementById('sheetClose');
-  let activePin = null;
-  const baseMapWidth = 1400;
-  const maxZoom = 2.5;
-  const zoomOutButton = document.getElementById('zoomOut');
-  const zoomInButton = document.getElementById('zoomIn');
-  const zoomFitButton = document.getElementById('zoomFit');
-  const zoomLevel = document.getElementById('zoomLevel');
-  let zoom = 1;
-  let pinch = null;
-
-  function minZoom() {
-    return Math.min(1, mapViewport.clientWidth / baseMapWidth);
+  const mapWrap=document.getElementById('mapWrap'),mapViewport=document.getElementById('mapViewport'),mapStatus=document.getElementById('mapStatus');
+  const sheet=document.getElementById('detailSheet'),sheetTitle=document.getElementById('sheetTitle'),sheetEvents=document.getElementById('sheetEvents'),closeButton=document.getElementById('sheetClose');
+  let events={},activePin=null,baseMapWidth=1688,zoom=1,pinch=null;
+  const maxZoom=2.5,zoomOutButton=document.getElementById('zoomOut'),zoomInButton=document.getElementById('zoomIn'),zoomFitButton=document.getElementById('zoomFit'),zoomLevel=document.getElementById('zoomLevel');
+  function minZoom(){return Math.min(1,mapViewport.clientWidth/baseMapWidth)}
+  function updateZoomControls(){zoomLevel.value=`${Math.round(zoom*100)}%`;zoomOutButton.disabled=zoom<=minZoom()+.001;zoomInButton.disabled=zoom>=maxZoom-.001;zoomFitButton.disabled=zoom<=minZoom()+.001}
+  function setZoom(next,clientX,clientY){const rect=mapViewport.getBoundingClientRect(),x=(clientX??rect.left+rect.width/2)-rect.left,y=(clientY??rect.top+rect.height/2)-rect.top,old=zoom;zoom=Math.min(maxZoom,Math.max(minZoom(),next));if(Math.abs(zoom-old)<.001)return;const contentX=mapViewport.scrollLeft+x,contentY=mapViewport.scrollTop+y;mapWrap.style.width=`${baseMapWidth*zoom}px`;mapViewport.scrollTo({left:contentX*zoom/old-x,top:contentY*zoom/old-y,behavior:'auto'});updateZoomControls()}
+  zoomOutButton.addEventListener('click',()=>setZoom(zoom/1.25));zoomInButton.addEventListener('click',()=>setZoom(zoom*1.25));zoomFitButton.addEventListener('click',()=>{setZoom(minZoom());mapViewport.scrollTo({left:0,top:0,behavior:'auto'})});
+  mapViewport.addEventListener('touchstart',event=>{if(event.touches.length!==2){pinch=null;return}const[a,b]=event.touches;pinch={distance:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),zoom}}, {passive:true});
+  mapViewport.addEventListener('touchmove',event=>{if(event.touches.length!==2||!pinch)return;event.preventDefault();const[a,b]=event.touches,distance=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);setZoom(pinch.zoom*distance/pinch.distance,(a.clientX+b.clientX)/2,(a.clientY+b.clientY)/2)}, {passive:false});
+  mapViewport.addEventListener('touchend',event=>{if(event.touches.length<2)pinch=null});mapViewport.addEventListener('wheel',event=>{if(!event.ctrlKey)return;event.preventDefault();setZoom(zoom*Math.exp(-event.deltaY/300),event.clientX,event.clientY)}, {passive:false});
+  window.addEventListener('resize',()=>{if(zoom<minZoom())setZoom(minZoom());updateZoomControls()});
+  function make(tag,className,text){const element=document.createElement(tag);element.className=className;if(text)element.textContent=text;return element}
+  function closeSheet(){sheet.hidden=true;if(activePin){activePin.classList.remove('active');activePin.focus()}activePin=null}
+  closeButton.addEventListener('click',closeSheet);document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!sheet.hidden)closeSheet()});
+  function openNumber(number,pin){if(activePin)activePin.classList.remove('active');activePin=pin;pin.classList.add('active');sheetTitle.textContent=`地図番号 ${number}`;sheetEvents.replaceChildren();
+    const found=Object.entries(events).flatMap(([zone,group])=>(group.items||[]).map(item=>({zone,group,item}))).filter(({item})=>Number(item.mapNumber)===number&&item.name&&item.name!=='（なし）');
+    if(!found.length){const empty=make('p','empty','この番号に登録された催事はありません。催事編集画面で地図番号を設定すると、ここに表示されます。');sheetEvents.append(empty)}
+    for(const {zone,group,item} of found){const card=make('article','event','');card.append(make('h3','',item.name));const meta=[item.room||group.building||group.label,item.time].filter(Boolean).join(' ・ ');if(meta)card.append(make('p','meta',meta));if(item.category)card.append(make('p','meta',item.category));if(item.desc&&item.desc!=='（準備中）')card.append(make('p','',item.desc));if(typeof item.image==='string'&&/^data:image\/(?:jpeg|png|webp);base64,[a-z\d+/=]+$/i.test(item.image)){const image=document.createElement('img');image.src=item.image;image.alt=`${item.name}の写真`;image.loading='lazy';image.style.cssText='display:block;width:min(100%,360px);border-radius:6px;margin-top:8px';card.append(image)}sheetEvents.append(card)}
+    if(found.some(({zone})=>zone==='gymA'||zone==='gymB')){const link=make('a','more-link','体育館のタイムテーブル・展示を見る →');link.href='taiikukan.html';sheetEvents.append(link)}sheet.hidden=false;closeButton.focus();
   }
-  function updateZoomControls() {
-    zoomLevel.value = `${Math.round(zoom * 100)}%`;
-    zoomOutButton.disabled = zoom <= minZoom() + .001;
-    zoomInButton.disabled = zoom >= maxZoom - .001;
-    zoomFitButton.disabled = zoom <= minZoom() + .001;
+  function renderPins(){mapWrap.querySelectorAll('.map-pin').forEach(pin=>pin.remove());const assigned=new Set(Object.values(events).flatMap(group=>group.items||[]).map(item=>Number(item.mapNumber)).filter(number=>Number.isInteger(number)&&number>=1&&number<=44));
+    for(let number=1;number<=44;number++){const point=window.MAP_POINTS?.[String(number)];if(!point)continue;const pin=document.createElement('button');pin.type='button';pin.className='map-pin';if(assigned.has(number))pin.classList.add('assigned');if(number>=31&&number<=33)pin.classList.add('tight');pin.dataset.mapNumber=number;pin.style.setProperty('--x',`${point.x}%`);pin.style.setProperty('--y',`${point.y}%`);pin.setAttribute('aria-label',`地図番号${number}の催事を見る`);pin.title=`地図番号 ${number}${assigned.has(number)?'・催事あり':''}`;pin.addEventListener('click',()=>openNumber(number,pin));mapWrap.append(pin)}
   }
-  function setZoom(next, clientX, clientY) {
-    const rect = mapViewport.getBoundingClientRect();
-    const x = (clientX ?? rect.left + rect.width / 2) - rect.left;
-    const y = (clientY ?? rect.top + rect.height / 2) - rect.top;
-    const oldZoom = zoom;
-    zoom = Math.min(maxZoom, Math.max(minZoom(), next));
-    if (Math.abs(zoom - oldZoom) < .001) return;
-    const contentX = mapViewport.scrollLeft + x;
-    const contentY = mapViewport.scrollTop + y;
-    mapWrap.style.width = `${baseMapWidth * zoom}px`;
-    mapViewport.scrollTo({
-      left: contentX * zoom / oldZoom - x,
-      top: contentY * zoom / oldZoom - y,
-      behavior: 'auto'
-    });
-    updateZoomControls();
+  function jumpTo(key){const coords={floor3:{x:48,y:22},floor2:{x:48,y:25},floor1:{x:48,y:29},admin:{x:50,y:39},courtyard:{x:52,y:88},gym:{x:84,y:38}}[key];if(!coords)return;mapViewport.scrollTo({left:mapWrap.clientWidth*coords.x/100-mapViewport.clientWidth/2,top:mapWrap.clientHeight*coords.y/100-mapViewport.clientHeight/2,behavior:'smooth'})}
+  document.querySelectorAll('[data-jump]').forEach(button=>button.addEventListener('click',()=>jumpTo(button.dataset.jump)));
+  async function load(){try{if(location.protocol==='file:')throw new Error('local fallback');const {loadEventsData}=await import('./event-data.js');const result=await loadEventsData();events=result.data;mapStatus.textContent=result.warning?'公開データを取得できないため、予備データを表示しています。':`催事情報を読み込みました。地図番号の登録数：${new Set(Object.values(events).flatMap(group=>group.items||[]).map(item=>Number(item.mapNumber)).filter(number=>Number.isInteger(number)&&number>=1&&number<=44)).size}か所`;
+      const {watchEventsVersion}=await import('./event-data.js');watchEventsVersion(async()=>{try{const next=await loadEventsData();events=next.data;renderPins()}catch{}},result.revision)
+    }catch{events=window.MAP_LOCAL_DATA?.events||{};mapStatus.textContent='保存済みの催事データを表示しています。地図番号は催事編集画面で設定できます。'}
+    renderPins();const image=mapWrap.querySelector('.map-image');await image.decode().catch(()=>{});baseMapWidth=image.naturalWidth||1688;mapWrap.style.width=`${baseMapWidth*zoom}px`;updateZoomControls();mapViewport.scrollTo({left:0,top:mapWrap.clientHeight*.18,behavior:'auto'});
   }
-  zoomOutButton.addEventListener('click', () => setZoom(zoom / 1.25));
-  zoomInButton.addEventListener('click', () => setZoom(zoom * 1.25));
-  zoomFitButton.addEventListener('click', () => {
-    setZoom(minZoom());
-    mapViewport.scrollTo({left: 0, top: 0, behavior: 'auto'});
-  });
-  mapViewport.addEventListener('touchstart', event => {
-    if (event.touches.length !== 2) { pinch = null; return; }
-    const [a, b] = event.touches;
-    pinch = {distance: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), zoom};
-  }, {passive: true});
-  mapViewport.addEventListener('touchmove', event => {
-    if (event.touches.length !== 2 || !pinch) return;
-    event.preventDefault();
-    const [a, b] = event.touches;
-    const distance = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-    setZoom(pinch.zoom * distance / pinch.distance, (a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2);
-  }, {passive: false});
-  mapViewport.addEventListener('touchend', event => { if (event.touches.length < 2) pinch = null; });
-  mapViewport.addEventListener('wheel', event => {
-    if (!event.ctrlKey) return;
-    event.preventDefault();
-    setZoom(zoom * Math.exp(-event.deltaY / 300), event.clientX, event.clientY);
-  }, {passive: false});
-  window.addEventListener('resize', () => {
-    if (zoom < minZoom()) setZoom(minZoom());
-    updateZoomControls();
-  });
-  updateZoomControls();
-
-  function closeSheet() {
-    sheet.hidden = true;
-    if (activePin) {
-      activePin.classList.remove('active');
-      activePin.focus();
-    }
-    activePin = null;
-  }
-  closeButton.addEventListener('click', closeSheet);
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && !sheet.hidden) closeSheet();
-  });
-
-  async function loadMap() {
-    try {
-      let events, links, positions, revision = null;
-      let usingFallback = location.protocol === 'file:';
-      if (!usingFallback) {
-        try {
-          const files = ['map-links.json', 'map-positions.json'];
-          const responses = await Promise.all(files.map(file => fetch(file, {cache: 'no-store'})));
-          if (responses.some(response => !response.ok)) throw new Error('地図データを取得できませんでした');
-          [links, positions] = await Promise.all(responses.map(response => response.json()));
-          const {loadEventsData} = await import('./event-data.js');
-          ({data: events, revision} = await loadEventsData());
-        } catch {
-          usingFallback = true;
-        }
-      }
-      if (usingFallback) ({events, links, positions} = window.MAP_LOCAL_DATA || {});
-      if (!events || !links || !positions) throw new Error('地図データを取得できませんでした');
-      if (!sheet.hidden) closeSheet();
-      mapWrap.querySelectorAll('.map-pin').forEach(pin => pin.remove());
-      const eventById = new Map(Object.values(events).flatMap(zone => zone.items || []).map(item => [item.id, item]));
-      const keys = [...Array.from({length: 39}, (_, index) => String(index + 1)), 'gymB', 'gymA'];
-      for (const key of keys) {
-        const position = positions[key];
-        const markerNumber = Number(key);
-        const isClassroom = Number.isInteger(markerNumber) && markerNumber >= 1 && markerNumber <= 24;
-        const floor = isClassroom ? Math.floor((markerNumber - 1) / 8) + 1 : null;
-        const roomIndex = isClassroom ? ((markerNumber - 1) % 8) + 1 : null;
-        const roomName = isClassroom ? `${floor}${String(roomIndex).padStart(2, '0')}教室` : null;
-        const eventIds = links[key];
-        if (!position || !Array.isArray(eventIds)) throw new Error(`地図番号${key}の対応データを確認してください`);
-        const pin = document.createElement('button');
-        pin.type = 'button';
-        pin.className = `map-pin ${/^\d+$/.test(key) ? 'number' : 'venue'}`;
-        pin.textContent = /^\d+$/.test(key) ? key : position.label || key;
-        pin.setAttribute('aria-label', roomName ? `${roomName}の催事を見る` : position.label ? `${position.label}の催事を見る` : `${key}番の催事を見る`);
-        pin.style.left = `${position.x}%`;
-        pin.style.top = `${position.y}%`;
-        pin.addEventListener('click', () => {
-          if (activePin) activePin.classList.remove('active');
-          activePin = pin;
-          pin.classList.add('active');
-          sheetTitle.textContent = roomName || position.label || `地図番号 ${key}`;
-          sheetEvents.replaceChildren();
-          for (const id of eventIds) {
-            const item = eventById.get(id);
-            if (!item) continue;
-            if (item.name === '（なし）') continue;
-            const card = document.createElement('article');
-            card.className = 'event';
-            const name = document.createElement('h3');
-            name.textContent = item.name;
-            card.append(name);
-            if (item.room || item.time) {
-              const meta = document.createElement('p');
-              meta.className = 'meta';
-              meta.textContent = [item.room, item.time].filter(Boolean).join(' ・ ');
-              card.append(meta);
-            }
-            if (item.desc) {
-              const desc = document.createElement('p');
-              desc.textContent = item.desc;
-              card.append(desc);
-            }
-            sheetEvents.append(card);
-          }
-          if (!sheetEvents.children.length) {
-            const empty = document.createElement('p');
-            empty.textContent = '現在、この場所に催事はありません。';
-            sheetEvents.append(empty);
-          }
-          if (key === 'gymA' || key === 'gymB') {
-            const more = document.createElement('a');
-            more.className = 'more-link';
-            more.href = 'taiikukan.html';
-            more.textContent = '体育館の特別催事を見る →';
-            sheetEvents.append(more);
-          }
-          sheet.hidden = false;
-          closeButton.focus();
-        });
-        mapWrap.append(pin);
-      }
-      function jumpTo(key, behavior = 'smooth') {
-        const position = positions[key];
-        mapViewport.scrollTo({
-          left: mapWrap.clientWidth * position.x / 100 - mapViewport.clientWidth / 2,
-          top: mapWrap.clientHeight * position.y / 100 - mapViewport.clientHeight / 2,
-          behavior
-        });
-      }
-      document.querySelectorAll('[data-jump]').forEach(button => { button.onclick = () => jumpTo(button.dataset.jump); });
-      await document.querySelector('.map-image').decode().catch(() => {});
-      jumpTo('12', 'auto');
-      mapStatus.textContent = usingFallback
-        ? '予備データを表示しています。教室番号・地図番号・体育館名をタップできます。'
-        : '教室番号・地図番号・体育館名をタップして詳細を見られます。';
-      return revision;
-    } catch (error) {
-      mapStatus.textContent = '地図の催事情報を読み込めませんでした。通信を確認して再読み込みしてください。';
-      mapStatus.classList.add('error');
-    }
-  }
-  loadMap().then(async revision => {
-    if (location.protocol === 'file:') return;
-    try {
-      const {watchEventsVersion} = await import('./event-data.js');
-      watchEventsVersion(() => loadMap(), revision);
-    } catch {}
-  });
-  if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  load();
+  if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body>
 </html>
